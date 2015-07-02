@@ -16,6 +16,8 @@
 #define PACKAGE "org.tizen.nornenjs"
 #endif
 
+#define APPDATA_KEY "AppData"
+
 typedef struct appdata {
 	Evas_Object *win;
 	Evas_Object *conform;

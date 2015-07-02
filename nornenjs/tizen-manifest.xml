@@ -2,7 +2,7 @@
 <manifest xmlns="http://tizen.org/ns/packages" api-version="2.3" package="org.tizen.nornenjs" version="1.0.0">
     <profile name="mobile"/>
     <ui-application appid="org.tizen.nornenjs" exec="nornenjs" multiple="false" nodisplay="false" taskmanage="true" type="capp">
-        <label>nornenjs</label>
+        <label>Nornenjs</label>
         <icon>favicon.png</icon>
     </ui-application>
     <privileges>
