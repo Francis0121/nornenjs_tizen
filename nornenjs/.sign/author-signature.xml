@@ -4,7 +4,7 @@
 <SignatureMethod Algorithm="http://www.w3.org/2001/04/xmldsig-more#rsa-sha256"></SignatureMethod>
 <Reference URI="bin%2Fnornenjs">
 <DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
-<DigestValue>OX+U8eGAhmxJPZyYqBs67hJFMF5busg/BeQDuipyoMQ=</DigestValue>
+<DigestValue>ePpjvq9QJdnyPnzaz9+GuObRYs70y72dxdutqscCuJ8=</DigestValue>
 </Reference>
 <Reference URI="lib%2Flibboost_system.so">
 <DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
@@ -13,6 +13,10 @@
 <Reference URI="lib%2Flibboost_system.so.1.55.0">
 <DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
 <DigestValue>YQ2PprhIGS1zyOVuAujWimsRyH4O3Xjmw6kxLVQKvSA=</DigestValue>
+</Reference>
+<Reference URI="res%2Fmain.png">
+<DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
+<DigestValue>cs1h3FYVNFRYxIeN4nKpZtglsGaT1ymDsmu0ODuUO/Q=</DigestValue>
 </Reference>
 <Reference URI="shared%2Fres%2Ffavicon.png">
 <DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
@@ -31,11 +35,11 @@
 </Reference>
 </SignedInfo>
 <SignatureValue>
-nTRjWBsnuN1mcqzTbZEHdiUcPUpUP99AvgF9BI6s3zoZCu2Z9vdoKhOzjuNkPGt/AtzwqhScqqr3
-fPxMk59/XbcyxMom+l5jeYBMjhX1PEmuuBTt3LoY6G7ssM2GFCafRheHIK4eNsp6MgwtXncj+Hcu
-6A17U1ciZYSTcgN65QH3/xfI0dpTYBm/LkCV+NU0e2x1QenamYQXGKoRfkJpRmCFkxUfeHSwemLi
-yyjjva27feim3+XvFbSMB+9S9zrkPXMtqdW3WR3ctcVXpMEfHKepI7Ipo7G0l9rVINaP4CyXxXYA
-/hkixnbIV4X+LCA+tAIQYtqSbr501OnaZAY+tg==
+XBKlmPlOG5i+3IRjLQ9Tf124IulfUTLq1wVkPIeWORMYWbdYvt/5lhbWfsBh/IWitvz8g5XAaNOu
+jRHomrPFSZceq8fOOjoI9DEOnJK323jQLhDxzrn6XXVpiMYJaloDI84Sc9DzdZAGuRwrnxjdC/dS
+8fdCX8tO1DVhmKS5P9mXGgSgaL6rJjSnLaKUnSWaz+Gq2ECYgN5tfK53+7sjFPaPE24SX/vTnHMZ
+ZcHzOyqnp3H9cyXnkX/xSNDt3amnpWnxIlG52E40DqhIiKvxw5iaRKovLxIrGXXjXxe7WmfxDACv
+mmPo8inL5vWki+ykUSylG0Wahmuw5dzfAV40Cg==
 </SignatureValue>
 <KeyInfo>
 <X509Data>

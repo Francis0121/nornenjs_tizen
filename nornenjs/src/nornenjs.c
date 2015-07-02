@@ -15,9 +15,51 @@ win_back_cb(void *data, Evas_Object *obj, void *event_info)
 	elm_win_lower(ad->win);
 }
 
+static Eina_Bool
+naviframe_pop_cb(void *data, Elm_Object_Item *it)
+{
+	Evas_Object *win = (Evas_Object *)data;
+
+	elm_win_lower(win);
+
+	return EINA_FALSE;
+}
+
+static void
+app_get_resource(const char *res_file_in, char *res_path_out, int res_path_max)
+{
+	char *res_path = app_get_resource_path();
+	if (res_path) {
+		snprintf(res_path_out, res_path_max, "%s%s", res_path, res_file_in);
+		free(res_path);
+	}
+}
+
+static Evas_Object *
+create_image_from_resource(appdata_s *ad, const char *res_file_in){
+	Evas_Object *img;
+	int width, height;
+	char img_path[PATH_MAX] = { 0, };
+	app_get_resource(res_file_in, img_path, PATH_MAX);
+
+	Evas* canvas = evas_object_evas_get(ad->nf);
+	img = evas_object_image_filled_add(canvas);		// Add an image to the given evas
+	evas_object_image_file_set(img, img_path, NULL);//Set the source file from where an image object must fetch the real image data
+	evas_object_move(img, 0, 0);					// Move the given Evas object to the given location inside its canvas�� viewport
+	evas_object_resize(img, 480, 800);				// Change the size of the given Evas object
+	evas_object_show(img);							// Make the given Evas object visible
+
+	evas_object_image_size_get(img, &width, &height);
+	dlog_print(DLOG_INFO, LOG_TAG,"width %d , height %d", width, height);
+
+	return img;
+}
+
 static void
 create_base_gui(appdata_s *ad)
 {
+	Evas_Object *image;
+
 	/* Window */
 	ad->win = elm_win_util_standard_add(PACKAGE, PACKAGE);
 	elm_win_autodel_set(ad->win, EINA_TRUE);
@@ -37,6 +79,9 @@ create_base_gui(appdata_s *ad)
 	evas_object_size_hint_weight_set(ad->nf, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
 	elm_object_content_set(ad->conform, ad->nf);
 	evas_object_show(ad->nf);
+
+	/* Image */
+	image = create_image_from_resource(ad, "main.png");
 
 	/* Show window after base gui is set up */
 	evas_object_show(ad->win);
