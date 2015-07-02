@@ -4,11 +4,11 @@
 <SignatureMethod Algorithm="http://www.w3.org/2001/04/xmldsig-more#rsa-sha256"></SignatureMethod>
 <Reference URI="author-signature.xml">
 <DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
-<DigestValue>Ad6mGg7O27E1TUoS/St1X2jpOV1CpOWFsfGi5lA1RMk=</DigestValue>
+<DigestValue>+E7rTVn4F42ROwGI43EwXNfZki+bYHLZRXHxLKGSaPM=</DigestValue>
 </Reference>
 <Reference URI="bin%2Fnornenjs">
 <DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
-<DigestValue>ePpjvq9QJdnyPnzaz9+GuObRYs70y72dxdutqscCuJ8=</DigestValue>
+<DigestValue>G8SetfGV5i/rOwdCnQriwND18ly78jYhbsScFHfMvKQ=</DigestValue>
 </Reference>
 <Reference URI="lib%2Flibboost_system.so">
 <DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
@@ -20,7 +20,7 @@
 </Reference>
 <Reference URI="res%2Fmain.png">
 <DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
-<DigestValue>cs1h3FYVNFRYxIeN4nKpZtglsGaT1ymDsmu0ODuUO/Q=</DigestValue>
+<DigestValue>EUPUWxCmGXAiBFWL8PrA8WdHoPv1RNUUO+RLqfJPxjU=</DigestValue>
 </Reference>
 <Reference URI="shared%2Fres%2Ffavicon.png">
 <DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
@@ -39,11 +39,11 @@
 </Reference>
 </SignedInfo>
 <SignatureValue>
-JESvZRPIDab3DyAvjvqF1wmtLlcapFQ3bMDW7PyxkEqP08XkjbebvCc7WUj8ikyTAC8hnNhme5F5
-BgTDk1kJQeKIWNsef8aRZhavwfzTYcwn3CxTs5G1jSPWghMIvxKz/0A+q6g4NhG2RyPR31pCKXfd
-JQZkyTzYyRebxKxRGa02Y7T1HiHYCyfwO+hS/AYOJdGFV/cQT2+LD2kW/1+o+RSNUmgb/vNSPklZ
-pNiGRIuxvkoU7L4sLmHXljIz6onIVu7JP8ink3cXKEwCCy+MMjhPx66sxxs9a8xTL3fE9sJ1OX5x
-r059+If66Wubj/IhatUHLzUkEXpZXMhGoY52Pg==
+zmKPwpVCTGr2H4ssnTLLIlWSEWGNdrznWhreu4+LCUpnw+z8sn397CGoTBa54TRwpu9mzPDElFE3
+Eu/hzFK9OCE1Y2UiFFJkQqVSnHqMhEd9NL8h/jIoUM4OjQT7V6YhyGfrkYw/IM5Ds7AfvgCsovup
+YrRWPAkFk3nQMuaD8uPD3oEfquUAr08OcD/HHXVXnttupi6tNKt9msVI1D3uMShUVUR+SlIhi6/s
+FsX4MHb77YleunXexJ4ss2cqRFMccgi9HblBzKlhAU/AIuRoIbC8FhnXypc1cQgYeAJXE1Z/1T/M
+tFBJB93tkHkTvqxRqvG7FoTwKEWw71Rp7j7OfQ==
 </SignatureValue>
 <KeyInfo>
 <X509Data>

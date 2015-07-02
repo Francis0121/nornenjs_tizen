@@ -20,6 +20,11 @@ typedef struct appdata {
 	Evas_Object *win;
 	Evas_Object *conform;
 	Evas_Object *nf;
+	Evas_Object *image;
+	Ecore_Timer *timer;
 } appdata_s;
+
+void editfield_cb(void *data, Evas_Object *obj, void *event_info);
+void nocontent_cb(void *data, Evas_Object *obj, void *event_info);
 
 #endif /* __nornenjs_H__ */

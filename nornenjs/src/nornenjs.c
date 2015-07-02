@@ -1,33 +1,80 @@
 #include <tizen.h>
 #include "nornenjs.h"
 
+#define TIMEOUT 3.0
+#define DELAY	3.0
+
+static double initial_time = 0;
+
 static void
-win_delete_request_cb(void *data, Evas_Object *obj, void *event_info)
-{
+win_delete_request_cb(void *data, Evas_Object *obj, void *event_info) {
 	ui_app_exit();
 }
 
 static void
-win_back_cb(void *data, Evas_Object *obj, void *event_info)
-{
+win_back_cb(void *data, Evas_Object *obj, void *event_info) {
 	appdata_s *ad = data;
 	/* Let window go to hide state. */
 	elm_win_lower(ad->win);
 }
 
-static Eina_Bool
-naviframe_pop_cb(void *data, Elm_Object_Item *it)
+static double
+get_current_time(void)
 {
-	Evas_Object *win = (Evas_Object *)data;
-
-	elm_win_lower(win);
-
-	return EINA_FALSE;
+	return ecore_time_get() - initial_time;
 }
 
 static void
-app_get_resource(const char *res_file_in, char *res_path_out, int res_path_max)
+list_selected_cb(void *data, Evas_Object *obj, void *event_info)
 {
+	Elm_Object_Item *it = event_info;
+	elm_list_item_selected_set(it, EINA_FALSE);
+}
+
+static Evas_Object *
+create_main_list(appdata_s *ad)
+{
+	Evas_Object *list;
+
+	/* List */
+	list = elm_list_add(ad->nf);
+	elm_list_mode_set(list, ELM_LIST_SCROLL);
+	evas_object_smart_callback_add(list, "selected", list_selected_cb, NULL);
+
+	/* Main Menu Items Here */
+	elm_list_item_append(list, "Editfield", NULL, NULL, editfield_cb, ad);
+	elm_list_item_append(list, "No Content", NULL, NULL, nocontent_cb, ad);
+
+	elm_list_go(list);
+
+	return list;
+}
+
+static Eina_Bool
+main_page_timer_cb(void *data EINA_UNUSED)
+{
+	appdata_s *ad = data;
+	Evas_Object *main_list;
+	Elm_Object_Item *nf_it;
+
+	dlog_print(DLOG_INFO, LOG_TAG, "Timer expired after %0.3f seconds.", get_current_time());
+
+	ecore_timer_delay(ad->timer, DELAY);
+	ad->timer = NULL;
+
+	/* Main list */
+	main_list = create_main_list(ad);
+	nf_it = elm_naviframe_item_push(ad->nf, "Volume Rendering List", NULL, NULL, main_list, NULL);
+
+	/* Change main-> list*/
+	evas_object_hide(ad->image);
+	evas_object_show(main_list);
+
+	return ECORE_CALLBACK_CANCEL;
+}
+
+static void
+app_get_resource(const char *res_file_in, char *res_path_out, int res_path_max) {
 	char *res_path = app_get_resource_path();
 	if (res_path) {
 		snprintf(res_path_out, res_path_max, "%s%s", res_path, res_file_in);
@@ -36,40 +83,32 @@ app_get_resource(const char *res_file_in, char *res_path_out, int res_path_max)
 }
 
 static Evas_Object *
-create_image_from_resource(appdata_s *ad, const char *res_file_in){
-	Evas_Object *img;
-	int width, height;
-	char img_path[PATH_MAX] = { 0, };
-	app_get_resource(res_file_in, img_path, PATH_MAX);
+create_image_from_resource(appdata_s *ad, const char *res_file_in) {
+	Evas_Object *image;
+	char image_path[PATH_MAX] = { 0, };
+	app_get_resource(res_file_in, image_path, PATH_MAX);
 
 	Evas* canvas = evas_object_evas_get(ad->nf);
-	img = evas_object_image_filled_add(canvas);		// Add an image to the given evas
-	evas_object_image_file_set(img, img_path, NULL);//Set the source file from where an image object must fetch the real image data
-	evas_object_move(img, 0, 0);					// Move the given Evas object to the given location inside its canvas�� viewport
-	evas_object_resize(img, 480, 800);				// Change the size of the given Evas object
-	evas_object_show(img);							// Make the given Evas object visible
+	image = evas_object_image_filled_add(canvas);
+	evas_object_image_file_set(image, image_path, NULL);
+	evas_object_move(image, 0, 0);
+	evas_object_resize(image, 480, 800);
 
-	evas_object_image_size_get(img, &width, &height);
-	dlog_print(DLOG_INFO, LOG_TAG,"width %d , height %d", width, height);
-
-	return img;
+	return image;
 }
 
-static void
-create_base_gui(appdata_s *ad)
-{
-	Evas_Object *image;
+static void create_base_gui(appdata_s *ad) {
 
 	/* Window */
 	ad->win = elm_win_util_standard_add(PACKAGE, PACKAGE);
 	elm_win_autodel_set(ad->win, EINA_TRUE);
 	elm_win_indicator_mode_set(ad->win, ELM_WIN_INDICATOR_HIDE);
-	evas_object_smart_callback_add(ad->win, "delete,request", win_delete_request_cb, NULL);
-	eext_object_event_callback_add(ad->win, EEXT_CALLBACK_BACK, win_back_cb, ad);
+	evas_object_smart_callback_add(ad->win, "delete,request",win_delete_request_cb, NULL);
+	eext_object_event_callback_add(ad->win, EEXT_CALLBACK_BACK, win_back_cb,ad);
 
 	/* Conformant */
 	ad->conform = elm_conformant_add(ad->win);
-	evas_object_size_hint_weight_set(ad->conform, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+	evas_object_size_hint_weight_set(ad->conform, EVAS_HINT_EXPAND,EVAS_HINT_EXPAND);
 	elm_win_resize_object_add(ad->win, ad->conform);
 	evas_object_show(ad->conform);
 
@@ -81,19 +120,22 @@ create_base_gui(appdata_s *ad)
 	evas_object_show(ad->nf);
 
 	/* Image */
-	image = create_image_from_resource(ad, "main.png");
+	ad->image = create_image_from_resource(ad, "main.png");
+	evas_object_show(ad->image);
+
+	/* Timer */
+	initial_time = ecore_time_get();
+	ecore_timer_add(TIMEOUT, main_page_timer_cb, ad);
 
 	/* Show window after base gui is set up */
 	evas_object_show(ad->win);
 }
 
-static bool
-app_create(void *data)
-{
+static bool app_create(void *data) {
 	/* Hook to take necessary actions before main event loop starts
-		Initialize UI resources and application's data
-		If this function returns true, the main loop of application starts
-		If this function returns false, the application is terminated */
+	 Initialize UI resources and application's data
+	 If this function returns true, the main loop of application starts
+	 If this function returns false, the application is terminated */
 	appdata_s *ad = data;
 
 	create_base_gui(ad);
@@ -101,74 +143,55 @@ app_create(void *data)
 	return true;
 }
 
-static void
-app_control(app_control_h app_control, void *data)
-{
+static void app_control(app_control_h app_control, void *data) {
 	/* Handle the launch request. */
 }
 
-static void
-app_pause(void *data)
-{
+static void app_pause(void *data) {
 	/* Take necessary actions when application becomes invisible. */
 }
 
-static void
-app_resume(void *data)
-{
+static void app_resume(void *data) {
 	/* Take necessary actions when application becomes visible. */
 }
 
-static void
-app_terminate(void *data)
-{
+static void app_terminate(void *data) {
 	/* Release all resources. */
 }
 
-static void
-ui_app_lang_changed(app_event_info_h event_info, void *user_data)
-{
+static void ui_app_lang_changed(app_event_info_h event_info, void *user_data) {
 	/*APP_EVENT_LANGUAGE_CHANGED*/
 	char *locale = NULL;
-	system_settings_get_value_string(SYSTEM_SETTINGS_KEY_LOCALE_LANGUAGE, &locale);
+	system_settings_get_value_string(SYSTEM_SETTINGS_KEY_LOCALE_LANGUAGE,
+			&locale);
 	elm_language_set(locale);
 	free(locale);
 	return;
 }
 
-static void
-ui_app_orient_changed(app_event_info_h event_info, void *user_data)
-{
+static void ui_app_orient_changed(app_event_info_h event_info, void *user_data) {
 	/*APP_EVENT_DEVICE_ORIENTATION_CHANGED*/
 	return;
 }
 
-static void
-ui_app_region_changed(app_event_info_h event_info, void *user_data)
-{
+static void ui_app_region_changed(app_event_info_h event_info, void *user_data) {
 	/*APP_EVENT_REGION_FORMAT_CHANGED*/
 }
 
-static void
-ui_app_low_battery(app_event_info_h event_info, void *user_data)
-{
+static void ui_app_low_battery(app_event_info_h event_info, void *user_data) {
 	/*APP_EVENT_LOW_BATTERY*/
 }
 
-static void
-ui_app_low_memory(app_event_info_h event_info, void *user_data)
-{
+static void ui_app_low_memory(app_event_info_h event_info, void *user_data) {
 	/*APP_EVENT_LOW_MEMORY*/
 }
 
-int
-main(int argc, char *argv[])
-{
-	appdata_s ad = {0,};
+int main(int argc, char *argv[]) {
+	appdata_s ad = { 0, };
 	int ret = 0;
 
-	ui_app_lifecycle_callback_s event_callback = {0,};
-	app_event_handler_h handlers[5] = {NULL, };
+	ui_app_lifecycle_callback_s event_callback = { 0, };
+	app_event_handler_h handlers[5] = { NULL, };
 
 	event_callback.create = app_create;
 	event_callback.terminate = app_terminate;
@@ -176,11 +199,16 @@ main(int argc, char *argv[])
 	event_callback.resume = app_resume;
 	event_callback.app_control = app_control;
 
-	ui_app_add_event_handler(&handlers[APP_EVENT_LOW_BATTERY], APP_EVENT_LOW_BATTERY, ui_app_low_battery, &ad);
-	ui_app_add_event_handler(&handlers[APP_EVENT_LOW_MEMORY], APP_EVENT_LOW_MEMORY, ui_app_low_memory, &ad);
-	ui_app_add_event_handler(&handlers[APP_EVENT_DEVICE_ORIENTATION_CHANGED], APP_EVENT_DEVICE_ORIENTATION_CHANGED, ui_app_orient_changed, &ad);
-	ui_app_add_event_handler(&handlers[APP_EVENT_LANGUAGE_CHANGED], APP_EVENT_LANGUAGE_CHANGED, ui_app_lang_changed, &ad);
-	ui_app_add_event_handler(&handlers[APP_EVENT_REGION_FORMAT_CHANGED], APP_EVENT_REGION_FORMAT_CHANGED, ui_app_region_changed, &ad);
+	ui_app_add_event_handler(&handlers[APP_EVENT_LOW_BATTERY],
+			APP_EVENT_LOW_BATTERY, ui_app_low_battery, &ad);
+	ui_app_add_event_handler(&handlers[APP_EVENT_LOW_MEMORY],
+			APP_EVENT_LOW_MEMORY, ui_app_low_memory, &ad);
+	ui_app_add_event_handler(&handlers[APP_EVENT_DEVICE_ORIENTATION_CHANGED],
+			APP_EVENT_DEVICE_ORIENTATION_CHANGED, ui_app_orient_changed, &ad);
+	ui_app_add_event_handler(&handlers[APP_EVENT_LANGUAGE_CHANGED],
+			APP_EVENT_LANGUAGE_CHANGED, ui_app_lang_changed, &ad);
+	ui_app_add_event_handler(&handlers[APP_EVENT_REGION_FORMAT_CHANGED],
+			APP_EVENT_REGION_FORMAT_CHANGED, ui_app_region_changed, &ad);
 	ui_app_remove_event_handler(handlers[APP_EVENT_LOW_MEMORY]);
 
 	ret = ui_app_main(argc, argv, &event_callback, &ad);
