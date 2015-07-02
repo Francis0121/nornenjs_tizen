@@ -16,8 +16,7 @@
 
 #include "nornenjs.h"
 
-static Evas_Object *
-create_nocontent_view(appdata_s *ad)
+static Evas_Object * create_volume_render_view(appdata_s *ad)
 {
 	Evas_Object *layout, *scroller;
 
@@ -38,13 +37,12 @@ create_nocontent_view(appdata_s *ad)
 	return scroller;
 }
 
-void
-nocontent_cb(void *data, Evas_Object *obj, void *event_info)
+void volume_render_cb(void *data, Evas_Object *obj, void *event_info)
 {
 	appdata_s *ad = (appdata_s *)data;
-	Evas_Object *nocontent_view;
+	Evas_Object *volume_render_view;
 
 	/* No Content view */
-	nocontent_view = create_nocontent_view(ad);
-	elm_naviframe_item_push(ad->nf, "No Content", NULL, NULL, nocontent_view, NULL);
+	volume_render_view = create_volume_render_view(ad);
+	elm_naviframe_item_push(ad->nf, "Bighead", NULL, NULL, volume_render_view, NULL);
 }

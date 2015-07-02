@@ -10,12 +10,6 @@ static void win_delete_request_cb(void *data, Evas_Object *obj, void *event_info
 	ui_app_exit();
 }
 
-static void win_back_cb(void *data, Evas_Object *obj, void *event_info) {
-	appdata_s *ad = data;
-	/* Let window go to hide state. */
-	elm_win_lower(ad->win);
-}
-
 static double get_current_time(void) {
 	return ecore_time_get() - initial_time;
 }
@@ -23,6 +17,30 @@ static double get_current_time(void) {
 static void list_selected_cb(void *data, Evas_Object *obj, void *event_info) {
 	Elm_Object_Item *it = event_info;
 	elm_list_item_selected_set(it, EINA_FALSE);
+}
+
+// ~ Back Button Active 시 가장 마지막에 대한 화면을 지금 mainList로 해주는 역할을 수행함. (아니면 해당 부분을 종료하도록함)
+static Eina_Bool naviframe_pop_cb(void *data, Elm_Object_Item *it){
+	Evas_Object *win = (Evas_Object *)data;
+	elm_win_lower(win);
+	return EINA_FALSE;
+}
+
+static Evas_Object * create_main_list(appdata_s *ad) {
+	Evas_Object *list;
+
+	/* List */
+	list = elm_list_add(ad->nf);
+	elm_list_mode_set(list, ELM_LIST_SCROLL);
+	evas_object_smart_callback_add(list, "selected", list_selected_cb, NULL);
+
+	/* Main Menu Items Here */
+	elm_list_item_append(list, "Bighead", NULL, NULL, volume_render_cb, ad);
+	elm_list_item_append(list, "Editfield", NULL, NULL, editfield_cb, ad);
+
+	elm_list_go(list);
+
+	return list;
 }
 
 static Eina_Bool main_page_timer_cb(void *data EINA_UNUSED) {
@@ -38,8 +56,8 @@ static Eina_Bool main_page_timer_cb(void *data EINA_UNUSED) {
 
 	/* Main list */
 	main_list = create_main_list(ad);
-	nf_it = elm_naviframe_item_push(ad->nf, "Volume Rendering List", NULL, NULL,
-			main_list, NULL);
+	nf_it = elm_naviframe_item_push(ad->nf, "Volume Rendering List", NULL, NULL, main_list, NULL);
+	elm_naviframe_item_pop_cb_set(nf_it, naviframe_pop_cb, ad->win);
 
 	/* Change main-> list*/
 	evas_object_hide(ad->image);
@@ -71,33 +89,13 @@ static Evas_Object * create_image_from_resource(appdata_s *ad, const char *res_f
 	return image;
 }
 
-static Evas_Object * create_main_list(appdata_s *ad) {
-	Evas_Object *list;
-
-	/* List */
-	list = elm_list_add(ad->nf);
-	elm_list_mode_set(list, ELM_LIST_SCROLL);
-	evas_object_smart_callback_add(list, "selected", list_selected_cb, NULL);
-
-	/* Main Menu Items Here */
-	elm_list_item_append(list, "Editfield", NULL, NULL, editfield_cb, ad);
-	elm_list_item_append(list, "No Content", NULL, NULL, nocontent_cb, ad);
-
-	elm_list_go(list);
-
-	return list;
-}
-
 static void create_base_gui(appdata_s *ad) {
 
 	/* Window */
 	ad->win = elm_win_util_standard_add(PACKAGE, PACKAGE);
 	elm_win_autodel_set(ad->win, EINA_TRUE);
 	elm_win_indicator_mode_set(ad->win, ELM_WIN_INDICATOR_HIDE);
-	evas_object_smart_callback_add(ad->win, "delete,request",
-			win_delete_request_cb, NULL);
-	eext_object_event_callback_add(ad->win, EEXT_CALLBACK_BACK, win_back_cb,
-			ad);
+	evas_object_smart_callback_add(ad->win, "delete,request",win_delete_request_cb, NULL);
 
 	/* Conformant */
 	ad->conform = elm_conformant_add(ad->win);
@@ -108,10 +106,8 @@ static void create_base_gui(appdata_s *ad) {
 
 	/* Naviframe */
 	ad->nf = elm_naviframe_add(ad->conform);
-	eext_object_event_callback_add(ad->nf, EEXT_CALLBACK_BACK,
-			eext_naviframe_back_cb, ad);
-	evas_object_size_hint_weight_set(ad->nf, EVAS_HINT_EXPAND,
-			EVAS_HINT_EXPAND);
+	eext_object_event_callback_add(ad->nf, EEXT_CALLBACK_BACK, eext_naviframe_back_cb, ad);
+	evas_object_size_hint_weight_set(ad->nf, EVAS_HINT_EXPAND,EVAS_HINT_EXPAND);
 	elm_object_content_set(ad->conform, ad->nf);
 	evas_object_show(ad->nf);
 

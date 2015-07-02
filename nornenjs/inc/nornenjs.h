@@ -25,6 +25,6 @@ typedef struct appdata {
 } appdata_s;
 
 void editfield_cb(void *data, Evas_Object *obj, void *event_info);
-void nocontent_cb(void *data, Evas_Object *obj, void *event_info);
+void volume_render_cb(void *data, Evas_Object *obj, void *event_info);
 
 #endif /* __nornenjs_H__ */
