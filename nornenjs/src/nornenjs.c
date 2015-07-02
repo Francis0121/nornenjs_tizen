@@ -6,34 +6,72 @@
 
 static double initial_time = 0;
 
-static void
-win_delete_request_cb(void *data, Evas_Object *obj, void *event_info) {
+static void win_delete_request_cb(void *data, Evas_Object *obj, void *event_info) {
 	ui_app_exit();
 }
 
-static void
-win_back_cb(void *data, Evas_Object *obj, void *event_info) {
+static void win_back_cb(void *data, Evas_Object *obj, void *event_info) {
 	appdata_s *ad = data;
 	/* Let window go to hide state. */
 	elm_win_lower(ad->win);
 }
 
-static double
-get_current_time(void)
-{
+static double get_current_time(void) {
 	return ecore_time_get() - initial_time;
 }
 
-static void
-list_selected_cb(void *data, Evas_Object *obj, void *event_info)
-{
+static void list_selected_cb(void *data, Evas_Object *obj, void *event_info) {
 	Elm_Object_Item *it = event_info;
 	elm_list_item_selected_set(it, EINA_FALSE);
 }
 
-static Evas_Object *
-create_main_list(appdata_s *ad)
-{
+static Eina_Bool main_page_timer_cb(void *data EINA_UNUSED) {
+	appdata_s *ad = data;
+	Evas_Object *main_list;
+	Elm_Object_Item *nf_it;
+
+	dlog_print(DLOG_INFO, LOG_TAG, "Timer expired after %0.3f seconds.",
+			get_current_time());
+
+	ecore_timer_delay(ad->timer, DELAY);
+	ad->timer = NULL;
+
+	/* Main list */
+	main_list = create_main_list(ad);
+	nf_it = elm_naviframe_item_push(ad->nf, "Volume Rendering List", NULL, NULL,
+			main_list, NULL);
+
+	/* Change main-> list*/
+	evas_object_hide(ad->image);
+	evas_object_show(main_list);
+
+	return ECORE_CALLBACK_CANCEL;
+}
+
+static void app_get_resource(const char *res_file_in, char *res_path_out,
+		int res_path_max) {
+	char *res_path = app_get_resource_path();
+	if (res_path) {
+		snprintf(res_path_out, res_path_max, "%s%s", res_path, res_file_in);
+		free(res_path);
+	}
+}
+
+static Evas_Object * create_image_from_resource(appdata_s *ad, const char *res_file_in) {
+	Evas_Object *image;
+	char image_path[PATH_MAX] = { 0, };
+	app_get_resource(res_file_in, image_path, PATH_MAX);
+
+	Evas* canvas = evas_object_evas_get(ad->nf);
+	image = evas_object_image_filled_add(canvas);
+	evas_object_image_file_set(image, image_path, NULL);
+	evas_object_move(image, 0, 0);
+	evas_object_resize(image, 480, 800);
+
+	return image;
+}
+
+static Evas_Object * create_main_list(appdata_s *ad) {
 	Evas_Object *list;
 
 	/* List */
@@ -50,72 +88,30 @@ create_main_list(appdata_s *ad)
 	return list;
 }
 
-static Eina_Bool
-main_page_timer_cb(void *data EINA_UNUSED)
-{
-	appdata_s *ad = data;
-	Evas_Object *main_list;
-	Elm_Object_Item *nf_it;
-
-	dlog_print(DLOG_INFO, LOG_TAG, "Timer expired after %0.3f seconds.", get_current_time());
-
-	ecore_timer_delay(ad->timer, DELAY);
-	ad->timer = NULL;
-
-	/* Main list */
-	main_list = create_main_list(ad);
-	nf_it = elm_naviframe_item_push(ad->nf, "Volume Rendering List", NULL, NULL, main_list, NULL);
-
-	/* Change main-> list*/
-	evas_object_hide(ad->image);
-	evas_object_show(main_list);
-
-	return ECORE_CALLBACK_CANCEL;
-}
-
-static void
-app_get_resource(const char *res_file_in, char *res_path_out, int res_path_max) {
-	char *res_path = app_get_resource_path();
-	if (res_path) {
-		snprintf(res_path_out, res_path_max, "%s%s", res_path, res_file_in);
-		free(res_path);
-	}
-}
-
-static Evas_Object *
-create_image_from_resource(appdata_s *ad, const char *res_file_in) {
-	Evas_Object *image;
-	char image_path[PATH_MAX] = { 0, };
-	app_get_resource(res_file_in, image_path, PATH_MAX);
-
-	Evas* canvas = evas_object_evas_get(ad->nf);
-	image = evas_object_image_filled_add(canvas);
-	evas_object_image_file_set(image, image_path, NULL);
-	evas_object_move(image, 0, 0);
-	evas_object_resize(image, 480, 800);
-
-	return image;
-}
-
 static void create_base_gui(appdata_s *ad) {
 
 	/* Window */
 	ad->win = elm_win_util_standard_add(PACKAGE, PACKAGE);
 	elm_win_autodel_set(ad->win, EINA_TRUE);
 	elm_win_indicator_mode_set(ad->win, ELM_WIN_INDICATOR_HIDE);
-	evas_object_smart_callback_add(ad->win, "delete,request",win_delete_request_cb, NULL);
-	eext_object_event_callback_add(ad->win, EEXT_CALLBACK_BACK, win_back_cb,ad);
+	evas_object_smart_callback_add(ad->win, "delete,request",
+			win_delete_request_cb, NULL);
+	eext_object_event_callback_add(ad->win, EEXT_CALLBACK_BACK, win_back_cb,
+			ad);
 
 	/* Conformant */
 	ad->conform = elm_conformant_add(ad->win);
-	evas_object_size_hint_weight_set(ad->conform, EVAS_HINT_EXPAND,EVAS_HINT_EXPAND);
+	evas_object_size_hint_weight_set(ad->conform, EVAS_HINT_EXPAND,
+			EVAS_HINT_EXPAND);
 	elm_win_resize_object_add(ad->win, ad->conform);
 	evas_object_show(ad->conform);
 
 	/* Naviframe */
 	ad->nf = elm_naviframe_add(ad->conform);
-	eext_object_event_callback_add(ad->nf, EEXT_CALLBACK_BACK, eext_naviframe_back_cb, ad);
-	evas_object_size_hint_weight_set(ad->nf, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+	eext_object_event_callback_add(ad->nf, EEXT_CALLBACK_BACK,
+			eext_naviframe_back_cb, ad);
+	evas_object_size_hint_weight_set(ad->nf, EVAS_HINT_EXPAND,
+			EVAS_HINT_EXPAND);
 	elm_object_content_set(ad->conform, ad->nf);
 	evas_object_show(ad->nf);
 
