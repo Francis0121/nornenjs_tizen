@@ -16,4 +16,10 @@
 #define PACKAGE "org.tizen.nornenjs"
 #endif
 
+typedef struct appdata {
+	Evas_Object *win;
+	Evas_Object *conform;
+	Evas_Object *nf;
+} appdata_s;
+
 #endif /* __nornenjs_H__ */
