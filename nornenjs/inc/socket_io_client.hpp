@@ -77,6 +77,7 @@ unsigned char * que_pop();
 extern "C"
 #endif
 unsigned char *image;
+
 int sizeBuf;
 int err;
 int bufWidth;

@@ -4,11 +4,11 @@
 <SignatureMethod Algorithm="http://www.w3.org/2001/04/xmldsig-more#rsa-sha256"></SignatureMethod>
 <Reference URI="author-signature.xml">
 <DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
-<DigestValue>itr9aU9xTWrVuJnDErvSGAR5go0mLT+qz5X26sYDqaU=</DigestValue>
+<DigestValue>E6FtKZtzprUI1YbruI3+W30sHuBwCFu6ky95mPqwwEc=</DigestValue>
 </Reference>
 <Reference URI="bin%2Fnornenjs">
 <DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
-<DigestValue>Oq/MyzXiIRgFdCVfQ3DDh4QBgrk2Twi0l3S0xMP8K/0=</DigestValue>
+<DigestValue>Wy3aIF939D0U8o3cPeQTndKvIgAMoI05DaSeLIlWcTI=</DigestValue>
 </Reference>
 <Reference URI="lib%2Flibboost_system.so">
 <DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
@@ -39,11 +39,11 @@
 </Reference>
 </SignedInfo>
 <SignatureValue>
-Ds9TESfwsajg/bjqRPep8SakSxv+/2Wr8odz28KKky7bV/+eOPfS32sq23Pu9QuMaGHsOf2heMc9
-IIKO/be2EBtO4tXHzmMxwfGH6o7KvvvDBYkcnuOUVi+3KQm6XDwo02vE2XDKc8vQ6ozuMRUo7/+s
-NzzhMyIxh8+2Xlg8uFplHloC2bE1PnoTrUvDbvpOPOxdBbHmCCBzguWiDiTGDe1WlweQ/hXaIAn8
-5sl91y7JEJBQVVYTb3z9VBvSMtLLBLE/RaLb46RDONoAs/dqzx5o38i0bIL3vUgOIlnRMVJ4oC9R
-9qc8WUKpRwvkP6wJZCSpCeTAod09m6asz0g7Ng==
+WOrwboO+Pmhbq4qHqhx1MaWPWutCGe6a9tF2cHux8aikKyCQQgoMJ9o+ncVRf4I9ISvonRvzZYIy
+ZZRXZcd4YsJyTdS+1xpB1iQCIM6p+bWfMfyLzLRS1ZgKckppYMrMBz3tNpazAaxplqm+//b2HRW4
+h9AVD9wl2SlPYUvsRVF5llTY1xvggZ7n/2VTbWCUaKSAQ7/uizpq5uo8qAsUqwzJ0lm5a1o93PKG
+Z0H0QKcF3LPI+fRGDJtB8Q/lDPNnSr8BUriwwg3AoAtL2NYdYH0OHSXNEQCUbMcMP8Vm7CjWTxNN
+L9ZfwnrtRW1q7hl+25XyLS/d1p23njcw13BN1g==
 </SignatureValue>
 <KeyInfo>
 <X509Data>

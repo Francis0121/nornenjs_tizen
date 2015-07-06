@@ -128,10 +128,7 @@ void draw_gl(Evas_Object *obj)
 	ELEMENTARY_GLVIEW_USE(obj);
 	ad = evas_object_data_get(obj, APPDATA_KEY);
 
-	dlog_print(DLOG_VERBOSE, LOG_TAG, "access image err : %d", err);
-
 	if(que_pop() != NULL){
-		dlog_print(DLOG_VERBOSE, LOG_TAG, "que_pop and drawing");
 
 		pthread_mutex_lock(&mutex);
 

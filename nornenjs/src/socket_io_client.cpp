@@ -109,6 +109,8 @@ extern "C" {
 		h.bind_event("tizenJpeg", [&](string const& name, message::ptr const& data, bool isAck,message::ptr &ack_resp){//message
 			_lock.lock();
 
+			dlog_print(DLOG_VERBOSE, LOG_TAG, "Bind tizen Jpeg");
+
 			int size = data->get_map()["stream"]->get_map()["size"]->get_int();
 			shared_ptr<const string> s_binary = data->get_map()["stream"]->get_map()["buffer"]->get_binary();
 			string buffer = *s_binary;
