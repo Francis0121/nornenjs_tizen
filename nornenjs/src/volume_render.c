@@ -73,6 +73,7 @@ static void create_volume_render_view(appdata_s *ad)
 
 void volume_render_cb(void *data, Evas_Object *obj, void *event_info)
 {
+	Elm_Object_Item *naviBox;
 	appdata_s *ad = (appdata_s *)data;
 
 	int thread_error_number = 0;
@@ -82,5 +83,7 @@ void volume_render_cb(void *data, Evas_Object *obj, void *event_info)
 	}
 
 	create_volume_render_view(ad);
-	elm_naviframe_item_push(ad->nf, "Bighead", NULL, NULL, ad->box, NULL);
+
+	naviBox = elm_naviframe_item_push(ad->nf, "Bighead", NULL, NULL, ad->box, NULL);
+	elm_naviframe_item_title_visible_set(naviBox, EINA_FALSE);
 }
