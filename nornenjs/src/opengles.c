@@ -59,8 +59,6 @@ init_gles(Evas_Object *obj)
 	set_perspective(obj, 60.0f, w, h, 1.0f, 400.0f);
 }
 
-
-
 void destroy_gles(Evas_Object *obj)
 {
 	dlog_print(DLOG_VERBOSE, LOG_TAG, "destroy_gles");
