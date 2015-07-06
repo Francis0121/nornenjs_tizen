@@ -91,6 +91,10 @@ static Evas_Object * create_image_from_resource(appdata_s *ad, const char *res_f
 
 static void create_base_gui(appdata_s *ad) {
 
+	//To develop a GL application, you have to call elm_config_accel_preference_set() before creating a window which makes an application to use GPU.
+	// !important
+	elm_config_accel_preference_set("opengl");
+
 	/* Window */
 	ad->win = elm_win_util_standard_add(PACKAGE, PACKAGE);
 	elm_win_autodel_set(ad->win, EINA_TRUE);

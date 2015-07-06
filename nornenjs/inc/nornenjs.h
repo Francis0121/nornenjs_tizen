@@ -27,6 +27,7 @@ typedef struct appdata {
 	Evas_Object *image;
 	Ecore_Timer *timer;
 	// ~ Table Object
+	Evas_Object *box;
 	Evas_Object *table;
 	Evas_Object *render_view;
 } appdata_s;
