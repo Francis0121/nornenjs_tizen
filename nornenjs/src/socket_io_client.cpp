@@ -71,12 +71,11 @@ extern "C" {
 
 extern "C" {
 
-	void socket_io_client(void *object)
+	void socket_io_client(void *data)
 	{
 		err = -9;//초기화
 		dlog_print(DLOG_VERBOSE, LOG_TAG, "Socket.io function start");
 
-		Evas_Object *evas_object = (Evas_Object *)object;
 		connection_listener l(h);
 		h.set_connect_listener(std::bind(&connection_listener::on_connected, &l));
 		h.set_close_listener(std::bind(&connection_listener::on_close, &l,std::placeholders::_1));

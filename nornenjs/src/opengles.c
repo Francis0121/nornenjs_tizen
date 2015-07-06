@@ -24,8 +24,6 @@
 
 pthread_mutex_t  mutex = PTHREAD_MUTEX_INITIALIZER; // 쓰레드 초기화
 
-#define LOG_TAG "socket.io.opengl"
-
 #define ONEP  +1.0
 #define ONEN  -1.0
 #define ZERO   0.0
@@ -130,8 +128,10 @@ void draw_gl(Evas_Object *obj)
 	ELEMENTARY_GLVIEW_USE(obj);
 	ad = evas_object_data_get(obj, APPDATA_KEY);
 
-	// dlog_print(DLOG_VERBOSE, LOG_TAG, "access image err : %d", err);
+	dlog_print(DLOG_VERBOSE, LOG_TAG, "access image err : %d", err);
+
 	if(que_pop() != NULL){
+		dlog_print(DLOG_VERBOSE, LOG_TAG, "que_pop and drawing");
 
 		pthread_mutex_lock(&mutex);
 

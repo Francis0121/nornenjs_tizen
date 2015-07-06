@@ -19,11 +19,16 @@
 #define APPDATA_KEY "AppData"
 
 typedef struct appdata {
+	// ~ Default Object
 	Evas_Object *win;
 	Evas_Object *conform;
 	Evas_Object *nf;
+	// ~ First page Object
 	Evas_Object *image;
 	Ecore_Timer *timer;
+	// ~ Table Object
+	Evas_Object *table;
+	Evas_Object *render_view;
 } appdata_s;
 
 void editfield_cb(void *data, Evas_Object *obj, void *event_info);

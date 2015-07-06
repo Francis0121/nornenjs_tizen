@@ -16,7 +16,7 @@ void turn_off_flag();
 #ifdef __cplusplus
 extern "C"
 #endif
-void socket_io_client(void *object);
+void socket_io_client(void *data);
 
 #ifdef __cplusplus
 extern "C"
