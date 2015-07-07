@@ -7,7 +7,7 @@ static pthread_t thread_id;
 static void otf_changed_cb(void *data, Evas_Object *obj, void *event_info) {
 	appdata_s *ad = data;
 	ad->is_otf = EINA_TRUE;
-	double otf = elm_slider_value_get(ad->otfSlider);
+	double otf = elm_slider_value_get(ad->otf_slider);
 	emit_otf((float) otf);
 }
 
@@ -15,7 +15,7 @@ static void otf_mouseup_cb(void *data, Evas_Object *obj, void *event_info) {
 	appdata_s *ad = data;
 	if (ad->is_otf) {
 		ad->is_otf = EINA_FALSE;
-		double otf = elm_slider_value_get(ad->otfSlider);
+		double otf = elm_slider_value_get(ad->otf_slider);
 		emit_otf_end((float) otf);
 	}
 }
@@ -24,7 +24,7 @@ static void otf_mouseup_cb(void *data, Evas_Object *obj, void *event_info) {
 static void brightness_changed_cb(void *data, Evas_Object *obj, void *event_info) {
 	appdata_s *ad = data;
 	ad->is_brightness = EINA_TRUE;
-	double brightness = elm_slider_value_get(ad->brightSlider);
+	double brightness = elm_slider_value_get(ad->bright_slider);
 	emit_brightness((float) (brightness / 100.0));
 }
 
@@ -43,8 +43,8 @@ static void mouse_down_cb(void *data, Evas *e, Evas_Object *obj, void *event_inf
 
 	ad->mouse_down = EINA_TRUE;
 
-	ad->oldVectorX1 = ev->cur.canvas.x;
-	ad->oldVectorY1 = ev->cur.canvas.y;
+	ad->old_vector_x1 = ev->cur.canvas.x;
+	ad->old_vector_y1 = ev->cur.canvas.y;
 }
 
 static void mouse_move_cb(void *data, Evas *e, Evas_Object *obj, void *event_info) {
@@ -59,8 +59,8 @@ static void mouse_move_cb(void *data, Evas *e, Evas_Object *obj, void *event_inf
 	}
 
 	if (ad->multi_mouse_down) {
-		ad->oldVectorX1 = ev->cur.canvas.x;
-		ad->oldVectorY1 = ev->cur.canvas.y;
+		ad->old_vector_x1 = ev->cur.canvas.x;
+		ad->old_vector_y1 = ev->cur.canvas.y;
 	}
 }
 
@@ -90,10 +90,10 @@ static void multi_mouse_down_cb(void *data, Evas *e, Evas_Object *obj, void *eve
 
 	ad->multi_mouse_down = EINA_TRUE;
 
-	ad->oldVectorX2 = ev->cur.canvas.x;
-	ad->oldVectorY2 = ev->cur.canvas.y;
+	ad->old_vector_x2 = ev->cur.canvas.x;
+	ad->old_vector_y2 = ev->cur.canvas.y;
 
-	ad->oldDist = spacing(ad->oldVectorX1, ad->oldVectorY1, ad->oldVectorX2, ad->oldVectorY2);
+	ad->old_dist = spacing(ad->old_vector_x1, ad->old_vector_y1, ad->old_vector_x2, ad->old_vector_y2);
 }
 
 static void multi_mouse_move_cb(void *data, Evas *e, Evas_Object *obj, void *event_info) {
@@ -103,16 +103,16 @@ static void multi_mouse_move_cb(void *data, Evas *e, Evas_Object *obj, void *eve
 
 	if (ad->multi_mouse_down) {
 
-		ad->oldVectorX2 = ev->cur.canvas.x;
-		ad->oldVectorY2 = ev->cur.canvas.y;
+		ad->old_vector_x2 = ev->cur.canvas.x;
+		ad->old_vector_y2 = ev->cur.canvas.y;
 
-		ad->newDist = spacing(ad->oldVectorX1, ad->oldVectorY1, ad->oldVectorX2, ad->oldVectorY2);
+		ad->new_dist = spacing(ad->old_vector_x1, ad->old_vector_y1, ad->old_vector_x2, ad->old_vector_y2);
 
 		// zoom in
-		if (ad->newDist - ad->oldDist > 15) {
+		if (ad->new_dist - ad->old_dist > 15) {
 
-			ad->oldDist = ad->newDist;
-			ad->div -= (((ad->newDist / ad->oldDist) / 50) * 10);
+			ad->old_dist = ad->new_dist;
+			ad->div -= (((ad->new_dist / ad->old_dist) / 50) * 10);
 
 			if (ad->div <= 0.2f) {
 				ad->div = 0.2f;
@@ -120,10 +120,10 @@ static void multi_mouse_move_cb(void *data, Evas *e, Evas_Object *obj, void *eve
 
 			emit_zoom(ad->div);
 		// zoom out
-		} else if (ad->oldDist - ad->newDist > 15) {
+		} else if (ad->old_dist - ad->new_dist > 15) {
 
-			ad->oldDist = ad->newDist;
-			ad->div += (((ad->newDist / ad->oldDist) / 50) * 10);
+			ad->old_dist = ad->new_dist;
+			ad->div += (((ad->new_dist / ad->old_dist) / 50) * 10);
 			if (ad->div >= 10.0f) {
 				ad->div = 10.0f;
 			}
@@ -150,6 +150,10 @@ static Eina_Bool anim_cb(void *data){
 static void destroy_anim(void *data, Evas *evas, Evas_Object *obj, void *event_info){
    Ecore_Animator *ani = data;
    ecore_animator_del(ani);
+}
+
+static void destroy_thread(void *data){
+	dlog_print(DLOG_VERBOSE, LOG_TAG, "call destory thread");
 }
 
 static void glview_create(appdata_s *ad){
@@ -188,7 +192,7 @@ static void create_volume_render_view(appdata_s *ad){
 	evas_object_show(box);
 
 	// ~ bright slider
-	ad->brightSlider = bright_slider = elm_slider_add(ad->win);
+	ad->bright_slider = bright_slider = elm_slider_add(ad->win);
 	evas_object_size_hint_align_set(bright_slider, EVAS_HINT_FILL, EVAS_HINT_FILL);
 	evas_object_size_hint_weight_set(bright_slider, 1, 0.00001);
 	elm_slider_indicator_format_set(bright_slider, "%1.0f");
@@ -205,7 +209,7 @@ static void create_volume_render_view(appdata_s *ad){
 	evas_object_show(ad->render_view);
 
 	// ~ otf slider
-	ad->otfSlider = otf_slider = elm_slider_add(ad->win);
+	ad->otf_slider = otf_slider = elm_slider_add(ad->win);
 	evas_object_size_hint_align_set(otf_slider, EVAS_HINT_FILL, EVAS_HINT_FILL);
 	evas_object_size_hint_weight_set(otf_slider, 0.00001, 0.00001);
 	elm_slider_indicator_format_set(otf_slider, "%1.0f");
@@ -232,4 +236,5 @@ void volume_render_cb(void *data, Evas_Object *obj, void *event_info){
 	create_volume_render_view(ad);
 	nav_item = elm_naviframe_item_push(ad->nf, "Bighead", NULL, NULL, ad->box, NULL);
 	elm_naviframe_item_title_visible_set(nav_item, EINA_FALSE);
+	elm_naviframe_item_pop_cb_set(nav_item, destroy_thread,ad); // destory thread pop
 }

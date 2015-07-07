@@ -26,7 +26,7 @@ typedef struct appdata {
 	// First Loading View
 	Evas_Object *image;
 	Ecore_Timer *timer;
-	// Box O(Volume Render View)
+	// Box (Volume Render View)
 	Ecore_Animator *anim;
 	Evas_Object *box;
 	Evas_Object *render_view;
@@ -38,21 +38,21 @@ typedef struct appdata {
 
 	// Multi touch event
 	Eina_Bool multi_mouse_down : 1;
-	float oldVectorX1;
-	float oldVectorY1;
-	float oldVectorX2;
-	float oldVectorY2;
-	float newDist;
-	float oldDist;
+	float old_vector_x1;
+	float old_vector_y1;
+	float old_vector_x2;
+	float old_vector_y2;
+	float new_dist;
+	float old_dist;
 	float div;
 
 	// Brightness
 	Eina_Bool is_brightness : 1;
-	Evas_Object *brightSlider;
+	Evas_Object *bright_slider;
 
 	// OTF
 	Eina_Bool is_otf : 1;
-	Evas_Object *otfSlider;
+	Evas_Object *otf_slider;
 
 } appdata_s;
 
