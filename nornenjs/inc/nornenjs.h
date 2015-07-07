@@ -54,6 +54,9 @@ typedef struct appdata {
 	Eina_Bool is_otf : 1;
 	Evas_Object *otf_slider;
 
+	// Data
+	int volume_number;
+
 } appdata_s;
 
 void editfield_cb(void *data, Evas_Object *obj, void *event_info);

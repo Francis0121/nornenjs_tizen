@@ -73,6 +73,7 @@ extern "C" {
 
 	void socket_io_client(void *data)
 	{
+		appdata_s *ad = (appdata_s *)data;
 		err = -9;//초기화
 		dlog_print(DLOG_VERBOSE, LOG_TAG, "Socket.io function start");
 
@@ -91,7 +92,11 @@ extern "C" {
 		dlog_print(DLOG_VERBOSE, LOG_TAG, "Socket.io connect finish");
 
 		// ~ CUDA Memory Initialize
-		h.emit("tizenInit", "");
+		std::ostringstream init_buf;
+		init_buf << ad->volume_number;
+
+		std::string init_json = "{ \"number\" : \"" + init_buf.str() +"\" } ";
+		h.emit("tizenInit", init_json);
 		dlog_print(DLOG_VERBOSE, LOG_TAG, "Emit \"tizenInit\" message\n");
 
 		// ~ After Memory Init. Do First tizen request image

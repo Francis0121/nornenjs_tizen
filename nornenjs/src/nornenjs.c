@@ -17,6 +17,7 @@ static double get_current_time(void) {
 static void list_selected_cb(void *data, Evas_Object *obj, void *event_info) {
 	Elm_Object_Item *it = event_info;
 	elm_list_item_selected_set(it, EINA_FALSE);
+	dlog_print(DLOG_VERBOSE, LOG_TAG, "list_selected_cb");
 }
 
 // ~ Back Button Active 시 가장 마지막에 대한 화면을 지금 mainList로 해주는 역할을 수행함. (아니면 해당 부분을 종료하도록함)
@@ -35,7 +36,9 @@ static Evas_Object * create_main_list(appdata_s *ad) {
 	evas_object_smart_callback_add(list, "selected", list_selected_cb, NULL);
 
 	/* Main Menu Items Here */
+	ad->volume_number = 1;
 	elm_list_item_append(list, "Bighead", NULL, NULL, volume_render_cb, ad);
+	elm_list_item_append(list, "Abdomen", NULL, NULL, volume_render_cb, ad);
 	elm_list_item_append(list, "Editfield", NULL, NULL, editfield_cb, ad);
 
 	elm_list_go(list);
