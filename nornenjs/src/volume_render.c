@@ -4,6 +4,38 @@
 
 static pthread_t thread_id;
 
+static void otf_changed_cb(void *data, Evas_Object *obj, void *event_info) {
+	appdata_s *ad = data;
+	ad->is_otf = EINA_TRUE;
+	double otf = elm_slider_value_get(ad->otfSlider);
+	emit_otf((float) otf);
+}
+
+static void otf_mouseup_cb(void *data, Evas_Object *obj, void *event_info) {
+	appdata_s *ad = data;
+	if (ad->is_otf) {
+		ad->is_otf = EINA_FALSE;
+		double otf = elm_slider_value_get(ad->otfSlider);
+		emit_otf_end((float) otf);
+	}
+}
+
+// ~ Brightness
+static void brightness_changed_cb(void *data, Evas_Object *obj, void *event_info) {
+	appdata_s *ad = data;
+	ad->is_brightness = EINA_TRUE;
+	double brightness = elm_slider_value_get(ad->brightSlider);
+	emit_brightness((float) (brightness / 100.0));
+}
+
+static void brightness_mouseup_cb(void *data, Evas_Object *obj, void *event_info) {
+	appdata_s *ad = data;
+	if (ad->is_brightness) {
+		ad->is_brightness = EINA_FALSE;
+		emit_quality();
+	}
+}
+
 // ~ mouse event
 static void mouse_down_cb(void *data, Evas *e, Evas_Object *obj, void *event_info) {
 	Evas_Event_Mouse_Move *ev = (Evas_Event_Mouse_Move *) event_info;
@@ -21,9 +53,9 @@ static void mouse_move_cb(void *data, Evas *e, Evas_Object *obj, void *event_inf
 
 	if (ad->mouse_down && !ad->multi_mouse_down) {
 		dlog_print(DLOG_VERBOSE, LOG_TAG, "single mouse move");
-		ad->rotationX += (ev->cur.canvas.x - ev->prev.canvas.x) / 10.0;
-		ad->rotationY += (ev->cur.canvas.y - ev->prev.canvas.y) / 10.0;
-		emit_rotation(ad->rotationX, ad->rotationY);
+		ad->rotation_x += (ev->cur.canvas.x - ev->prev.canvas.x) / 10.0;
+		ad->rotation_y += (ev->cur.canvas.y - ev->prev.canvas.y) / 10.0;
+		emit_rotation(ad->rotation_x, ad->rotation_y);
 	}
 
 	if (ad->multi_mouse_down) {
@@ -138,26 +170,51 @@ static void glview_create(appdata_s *ad){
    evas_object_size_hint_align_set(render_view, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_size_hint_weight_set(render_view, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
 
-	// ~ touch event add
+	// ~ touch event listener
 	evas_object_event_callback_add(render_view, EVAS_CALLBACK_MOUSE_DOWN, mouse_down_cb, ad);
 	evas_object_event_callback_add(render_view, EVAS_CALLBACK_MOUSE_UP, mouse_up_cb, ad);
 	evas_object_event_callback_add(render_view, EVAS_CALLBACK_MOUSE_MOVE, mouse_move_cb, ad);
 
-	// ~ multi touch event
+	// ~ multi touch event listener
 	evas_object_event_callback_add(render_view, EVAS_CALLBACK_MULTI_DOWN, multi_mouse_down_cb, ad);
 	evas_object_event_callback_add(render_view, EVAS_CALLBACK_MULTI_MOVE, multi_mouse_move_cb, ad);
 	evas_object_event_callback_add(render_view, EVAS_CALLBACK_MULTI_UP, multi_mouse_up_cb, ad);
 }
 
 static void create_volume_render_view(appdata_s *ad){
-	Evas_Object *box;
+	Evas_Object *box, *bright_slider, *otf_slider;
 
 	ad->box = box = elm_box_add(ad->nf);
-	evas_object_show(ad->box);
+	evas_object_show(box);
 
+	// ~ bright slider
+	ad->brightSlider = bright_slider = elm_slider_add(ad->win);
+	evas_object_size_hint_align_set(bright_slider, EVAS_HINT_FILL, EVAS_HINT_FILL);
+	evas_object_size_hint_weight_set(bright_slider, 1, 0.00001);
+	elm_slider_indicator_format_set(bright_slider, "%1.0f");
+	elm_slider_min_max_set(bright_slider, 0, 600);
+	elm_slider_value_set(bright_slider, 200);
+	evas_object_smart_callback_add(bright_slider, "changed", brightness_changed_cb, ad);
+	evas_object_event_callback_add(bright_slider, EVAS_CALLBACK_MOUSE_UP, brightness_mouseup_cb, ad);
+	elm_box_pack_end(box, bright_slider);
+	evas_object_show(bright_slider);
+
+	// ~ render view
 	glview_create(ad);
-	elm_box_pack_end(ad->box, ad->render_view);
+	elm_box_pack_end(box, ad->render_view);
 	evas_object_show(ad->render_view);
+
+	// ~ otf slider
+	ad->otfSlider = otf_slider = elm_slider_add(ad->win);
+	evas_object_size_hint_align_set(otf_slider, EVAS_HINT_FILL, EVAS_HINT_FILL);
+	evas_object_size_hint_weight_set(otf_slider, 0.00001, 0.00001);
+	elm_slider_indicator_format_set(otf_slider, "%1.0f");
+	elm_slider_min_max_set(otf_slider, 0, 165);
+	elm_slider_value_set(otf_slider, 65);
+	evas_object_smart_callback_add(otf_slider, "changed", otf_changed_cb, ad);
+	evas_object_event_callback_add(otf_slider, EVAS_CALLBACK_MOUSE_UP, otf_mouseup_cb, ad);
+	elm_box_pack_end(box, otf_slider);
+	evas_object_show(otf_slider);
 
 	ad->anim = ecore_animator_add(anim_cb, ad);
 	evas_object_event_callback_add(ad->render_view, EVAS_CALLBACK_DEL, destroy_anim, ad->anim);
