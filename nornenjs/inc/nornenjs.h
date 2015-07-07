@@ -19,18 +19,36 @@
 #define APPDATA_KEY "AppData"
 
 typedef struct appdata {
-	// ~ Default Object
+	// ~ Default Wrapper
 	Evas_Object *win;
 	Evas_Object *conform;
 	Evas_Object *nf;
-	// ~ First page Object
+	// ~ First Loading View
 	Evas_Object *image;
 	Ecore_Timer *timer;
-	// ~ Table Object
+	// ~ Box O(Volume Render View)
 	Ecore_Animator *anim;
 	Evas_Object *box;
-	Evas_Object *table;
 	Evas_Object *render_view;
+
+	/**
+	* Touch event - 3d object rotation
+	*/
+	Eina_Bool mouse_down : 1;
+	float rotationX;
+	float rotationY;
+
+	/**
+	* Multi touch event - 3d object resize
+	*/
+	Eina_Bool multi_mouse_down : 1;
+	float oldVectorX1;
+	float oldVectorY1;
+	float oldVectorX2;
+	float oldVectorY2;
+	float newDist;
+	float oldDist;
+	float div;
 
 } appdata_s;
 

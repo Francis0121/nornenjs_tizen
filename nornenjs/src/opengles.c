@@ -22,28 +22,25 @@
 #include "socket_io_client.hpp"
 #include "nornenjs.h"
 
-pthread_mutex_t  mutex = PTHREAD_MUTEX_INITIALIZER; // 쓰레드 초기화
+// Initialize thread
+pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
 
 #define ONEP  +1.0
 #define ONEN  -1.0
 #define ZERO   0.0
 #define Z_POS_INC 0.01f
 
-static void set_perspective(Evas_Object *obj, float fovDegree, int w, int h, float zNear,  float zFar)
-{
-   ELEMENTARY_GLVIEW_USE(obj);
+static void set_perspective(Evas_Object *obj, float fovDegree, int w, int h,float zNear, float zFar) {
+	ELEMENTARY_GLVIEW_USE(obj);
 
-   glViewport(0, 0, w, h);
-   float ratio = (float)w / (float)h;
-   glMatrixMode(GL_PROJECTION);
-   glLoadIdentity();
-   glFrustumf(-ratio, ratio, -1, 1, 1, 10);
+	glViewport(0, 0, w, h);
+	float ratio = (float) w / (float) h;
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	glFrustumf(-ratio, ratio, -1, 1, 1, 10);
 }
 
-
-void
-init_gles(Evas_Object *obj)
-{
+void init_gles(Evas_Object *obj) {
 	dlog_print(DLOG_VERBOSE, LOG_TAG, "INIT_GLES function (init_gles)");
 	ELEMENTARY_GLVIEW_USE(obj);
 	evas_object_data_get(obj, APPDATA_KEY);
@@ -59,86 +56,79 @@ init_gles(Evas_Object *obj)
 	set_perspective(obj, 60.0f, w, h, 1.0f, 400.0f);
 }
 
-void destroy_gles(Evas_Object *obj)
-{
+void destroy_gles(Evas_Object *obj) {
 	dlog_print(DLOG_VERBOSE, LOG_TAG, "destroy_gles");
 
-   ELEMENTARY_GLVIEW_USE(obj);
-   evas_object_data_get(obj, APPDATA_KEY);
+	ELEMENTARY_GLVIEW_USE(obj);
+	evas_object_data_get(obj, APPDATA_KEY);
 }
 
-void resize_gl(Evas_Object *obj)
-{
+void resize_gl(Evas_Object *obj) {
 	dlog_print(DLOG_VERBOSE, LOG_TAG, "resize_gl");
-   int w, h;
+	int w, h;
 
-   elm_glview_size_get(obj, &w, &h);
+	elm_glview_size_get(obj, &w, &h);
 
-   set_perspective(obj, 60.0f, w, h, 1.0f, 400.0f);
+	set_perspective(obj, 60.0f, w, h, 1.0f, 400.0f);
 }
 
-static void draw_cube(Evas_Object *obj)
-{
-   appdata_s *ad;
+static void draw_volume_view(Evas_Object *obj) {
+	appdata_s *ad;
 
-   ELEMENTARY_GLVIEW_USE(obj);
-   ad = evas_object_data_get(obj, APPDATA_KEY);
+	ELEMENTARY_GLVIEW_USE(obj);
+	ad = evas_object_data_get(obj, APPDATA_KEY);
 
-   static const float VERTICES[] =
-   {
-		   -2.0f	, -2.0f, 0.0f,	// 3, Left Bottom
-		   2.0f	, -2.0f, 0.0f,	// 2, Right Bottom
-		   -2.0f	, 2.0f	, 0.0f, 	// 0, Left Top
-		   2.0f	, 2.0f	, 0.0f		// 1, Right Top
-   };
+	static const float VERTICES[] = {
+			-2.0f, -2.0f, 0.0f,	// 3, Left Bottom
+			2.0f, -2.0f, 0.0f,	// 2, Right Bottom
+			-2.0f, 2.0f, 0.0f, 	// 0, Left Top
+			2.0f, 2.0f, 0.0f		// 1, Right Top
+		};
 
-   static const float TEXTURE_COORD[] =
-   {
-		   0.0f, 1.0f,
-		   1.0f, 1.0f,
-		   0.0f, 0.0f,
-		   1.0f, 0.0f,
-   };
+	static const float TEXTURE_COORD[] = {
+			0.0f, 1.0f,
+			1.0f, 1.0f,
+			0.0f, 0.0f,
+			1.0f, 0.0f,
+	};
 
+	glEnableClientState(GL_VERTEX_ARRAY);
+	glVertexPointer(3, GL_FLOAT, 0, VERTICES);
 
-   glEnableClientState(GL_VERTEX_ARRAY);
-   glVertexPointer(3, GL_FLOAT, 0, VERTICES);
+	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+	glTexCoordPointer(2, GL_FLOAT, 0, TEXTURE_COORD);
 
-   glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-   glTexCoordPointer(2, GL_FLOAT, 0, TEXTURE_COORD);
+	glEnable(GL_TEXTURE_2D);
+	glMatrixMode(GL_MODELVIEW);
 
-   glEnable(GL_TEXTURE_2D);
-   glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
+	glTranslatef(0, 0.0f, -2.0f);
 
-   glLoadIdentity();
-   glTranslatef(0, 0.0f, -2.0f);
+	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 
-   glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-
-   glDisable(GL_TEXTURE_2D);
-   glDisableClientState(GL_VERTEX_ARRAY);
-   glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+	glDisable(GL_TEXTURE_2D);
+	glDisableClientState(GL_VERTEX_ARRAY);
+	glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 }
 
-void draw_gl(Evas_Object *obj)
-{
+void draw_gl(Evas_Object *obj) {
 	appdata_s *ad;
 	ELEMENTARY_GLVIEW_USE(obj);
 	ad = evas_object_data_get(obj, APPDATA_KEY);
 
-	if(que_pop() != NULL){
+	if (que_pop() != NULL) {
 
 		pthread_mutex_lock(&mutex);
 
-		if(!err)
-		{
-			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, bufWidth, bufHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, que_pop());//image
+		if (!err) {
+			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, bufWidth, bufHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, que_pop());
 			glTexParameterx(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 			glTexParameterx(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 		}
-		pthread_mutex_unlock(&mutex); // 잠금을 해제한다.
+
+		pthread_mutex_unlock(&mutex);
 	}
 
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	draw_cube(obj);
+	draw_volume_view(obj);
 }
