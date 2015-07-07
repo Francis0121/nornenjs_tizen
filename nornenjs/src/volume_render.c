@@ -158,7 +158,8 @@ static void destroy_thread_cb(void *data){
 
 	turn_off_flag();
 
-	free_que();
+// TODO call free_que function -> application dead
+//	free_que();
 //	if(image)
 //		free(image);
 }

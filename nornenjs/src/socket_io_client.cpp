@@ -124,7 +124,7 @@ extern "C" {
 
 			err = image_util_decode_jpeg_from_memory((unsigned char *)textBuf, sizeBuf, IMAGE_UTIL_COLORSPACE_RGBA8888, &image, &bufWidth, &bufHeight, &decodeBufSize);
 
-			que_in(image);
+			bufferQue[++count] = image; // TODO convert func que_in(image);
 
 			if(!err)//IMAGE_UTIL_ERROR_NONE != error
 			{
@@ -255,13 +255,21 @@ extern "C" {
 
 extern "C" {
 	void free_que(){
-		for(int i = 0; i < 5; i++){
+		_lock.lock();
+		dlog_print(DLOG_VERBOSE, LOG_TAG, "free que start");
+		for(int i = 0; i < 6; i++){
+			dlog_print(DLOG_VERBOSE, LOG_TAG, "free start if");
 			if(bufferQue[i] != NULL){
+				dlog_print(DLOG_VERBOSE, LOG_TAG, "free do %d", i);
 				free(bufferQue[i]);
 			}else{
+				dlog_print(DLOG_VERBOSE, LOG_TAG, "free break");
 				break;
 			}
+			dlog_print(DLOG_VERBOSE, LOG_TAG, "free end if");
 		}
+		dlog_print(DLOG_VERBOSE, LOG_TAG, "free que end");
+		_lock.unlock();
 	}
 }
 
