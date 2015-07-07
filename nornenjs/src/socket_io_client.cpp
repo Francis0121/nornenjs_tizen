@@ -1,3 +1,4 @@
+#include "nornenjs.h"
 #include "sio_client.h"
 #include "socket_io_client.hpp"
 
@@ -12,7 +13,6 @@
 #include <image_util.h>
 
 #define QSIZE 5
-#define LOG_TAG "socket.io.client"
 
 using namespace sio;
 using namespace std;
@@ -254,14 +254,12 @@ extern "C" {
 }
 
 extern "C" {
-	void free_que()
-	{
-		for(int i = 0; i < 6; i++)//or count
-		{
-			if(bufferQue[i])
-			{
+	void free_que(){
+		for(int i = 0; i < 5; i++){
+			if(bufferQue[i] != NULL){
 				free(bufferQue[i]);
-				bufferQue[i] = NULL;
+			}else{
+				break;
 			}
 		}
 	}
