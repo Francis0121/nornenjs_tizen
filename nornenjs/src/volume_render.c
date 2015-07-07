@@ -5,9 +5,8 @@
 static pthread_t thread_id;
 
 // ~ mouse event
-static void
-mouse_down_cb(void *data, Evas *e , Evas_Object *obj , void *event_info){
-	Evas_Event_Mouse_Move *ev = (Evas_Event_Mouse_Move *)event_info;
+static void mouse_down_cb(void *data, Evas *e, Evas_Object *obj, void *event_info) {
+	Evas_Event_Mouse_Move *ev = (Evas_Event_Mouse_Move *) event_info;
 	appdata_s *ad = data;
 
 	ad->mouse_down = EINA_TRUE;
@@ -16,46 +15,42 @@ mouse_down_cb(void *data, Evas *e , Evas_Object *obj , void *event_info){
 	ad->oldVectorY1 = ev->cur.canvas.y;
 }
 
-static void
-mouse_move_cb(void *data, Evas *e , Evas_Object *obj , void *event_info){
-	Evas_Event_Mouse_Move *ev = (Evas_Event_Mouse_Move *)event_info;
+static void mouse_move_cb(void *data, Evas *e, Evas_Object *obj, void *event_info) {
+	Evas_Event_Mouse_Move *ev = (Evas_Event_Mouse_Move *) event_info;
 	appdata_s *ad = data;
 
-	if(ad->mouse_down && !ad->multi_mouse_down) {
+	if (ad->mouse_down && !ad->multi_mouse_down) {
 		dlog_print(DLOG_VERBOSE, LOG_TAG, "single mouse move");
 		ad->rotationX += (ev->cur.canvas.x - ev->prev.canvas.x) / 10.0;
 		ad->rotationY += (ev->cur.canvas.y - ev->prev.canvas.y) / 10.0;
 		emit_rotation(ad->rotationX, ad->rotationY);
 	}
 
-	if(ad->multi_mouse_down){
+	if (ad->multi_mouse_down) {
 		ad->oldVectorX1 = ev->cur.canvas.x;
 		ad->oldVectorY1 = ev->cur.canvas.y;
 	}
 }
 
-static void
-mouse_up_cb(void *data, Evas *e , Evas_Object *obj , void *event_info){
+static void mouse_up_cb(void *data, Evas *e, Evas_Object *obj, void *event_info) {
 	appdata_s *ad = data;
 
-	if(ad->mouse_down){
+	if (ad->mouse_down) {
 		emit_quality();
 		ad->mouse_down = EINA_FALSE;
 	}
 }
 
 // ~ Multi Mouse event
-static float
-spacing(float x1,float y1, float x2, float y2) {
+static float spacing(float x1, float y1, float x2, float y2) {
 
-    float x = x1- x2;
-    float y = y1 - y2;
+	float x = x1 - x2;
+	float y = y1 - y2;
 
-    return sqrt(x * x + y * y);
+	return sqrt(x * x + y * y);
 }
 
-static void
-multi_mouse_down_cb(void *data, Evas *e, Evas_Object *obj , void *event_info){
+static void multi_mouse_down_cb(void *data, Evas *e, Evas_Object *obj, void *event_info) {
 	Evas_Event_Multi_Move *ev = (Evas_Event_Multi_Move *) event_info;
 	appdata_s *ad = data;
 
@@ -66,21 +61,20 @@ multi_mouse_down_cb(void *data, Evas *e, Evas_Object *obj , void *event_info){
 	ad->oldVectorX2 = ev->cur.canvas.x;
 	ad->oldVectorY2 = ev->cur.canvas.y;
 
-	ad->oldDist = spacing(ad->oldVectorX1,ad->oldVectorY1,ad->oldVectorX2,ad->oldVectorY2);
+	ad->oldDist = spacing(ad->oldVectorX1, ad->oldVectorY1, ad->oldVectorX2, ad->oldVectorY2);
 }
 
-static void
-multi_mouse_move_cb(void *data, Evas *e, Evas_Object *obj , void *event_info){
+static void multi_mouse_move_cb(void *data, Evas *e, Evas_Object *obj, void *event_info) {
 
 	Evas_Event_Multi_Move *ev = (Evas_Event_Multi_Move *) event_info;
 	appdata_s *ad = data;
 
-	if(ad->multi_mouse_down) {
+	if (ad->multi_mouse_down) {
 
 		ad->oldVectorX2 = ev->cur.canvas.x;
 		ad->oldVectorY2 = ev->cur.canvas.y;
 
-		ad->newDist = spacing(ad->oldVectorX1,ad->oldVectorY1,ad->oldVectorX2,ad->oldVectorY2);
+		ad->newDist = spacing(ad->oldVectorX1, ad->oldVectorY1, ad->oldVectorX2, ad->oldVectorY2);
 
 		// zoom in
 		if (ad->newDist - ad->oldDist > 15) {
@@ -94,7 +88,7 @@ multi_mouse_move_cb(void *data, Evas *e, Evas_Object *obj , void *event_info){
 
 			emit_zoom(ad->div);
 		// zoom out
-		}else if (ad->oldDist - ad->newDist > 15) {
+		} else if (ad->oldDist - ad->newDist > 15) {
 
 			ad->oldDist = ad->newDist;
 			ad->div += (((ad->newDist / ad->oldDist) / 50) * 10);
@@ -102,20 +96,19 @@ multi_mouse_move_cb(void *data, Evas *e, Evas_Object *obj , void *event_info){
 				ad->div = 10.0f;
 			}
 			emit_zoom(ad->div);
-        }
+		}
 	}
 }
 
-static void
-multi_mouse_up_cb(void *data, Evas *e, Evas_Object *obj , void *event_info){
+static void multi_mouse_up_cb(void *data, Evas *e, Evas_Object *obj, void *event_info) {
 	appdata_s *ad = data;
-	if(ad->multi_mouse_down){
+	if (ad->multi_mouse_down) {
 		ad->multi_mouse_down = EINA_FALSE;
 		emit_quality();
 	}
 }
 
-
+// ~ Animator
 static Eina_Bool anim_cb(void *data){
    appdata_s *ad = data;
    elm_glview_changed_set(ad->render_view);
