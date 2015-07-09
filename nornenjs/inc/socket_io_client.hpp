@@ -52,21 +52,8 @@ void emit_zoom(float positionZ);
 #ifdef __cplusplus
 extern "C"
 #endif
-void image_queue_push();
+unsigned char * image_pop();
 
-#ifdef __cplusplus
-extern "C"
-#endif
-unsigned char * image_queue_pop();
-
-#ifdef __cplusplus
-extern "C"
-#endif
-int image_queue_is_null();
-
-#ifdef __cplusplus
-extern "C"
-#endif
 unsigned char *input_image;
 unsigned char *output_image;
 

@@ -18,12 +18,8 @@ std::mutex _lock;
 std::condition_variable_any _cond;
 bool connect_finish = false;
 
-
 #define LOG_TAG_QUEUE "nornenjs_queue"
 
-unsigned char * buffer_queue[IMAGE_QUEUE_SIZE];
-int queue_front = 0;
-int queue_rear = 0;
 int image_diff_count = 0;
 
 class connection_listener
@@ -122,8 +118,11 @@ extern "C" {
 
 			unsigned int decode_buf_size;
 			image_bind_error = image_util_decode_jpeg_from_memory((unsigned char *)image_char, global_binary_data_size, IMAGE_UTIL_COLORSPACE_RGBA8888, &input_image, &image_buffer_width, &image_buffer_height, &decode_buf_size);
-			image_queue_push();
 
+			if(image_diff_count == 0){
+				dlog_print(DLOG_INFO, LOG_TAG_QUEUE, "Queue push");
+				image_diff_count+=1;
+			}
 			_lock.unlock();
 		});
 
@@ -219,34 +218,15 @@ extern "C" {
 }
 
 extern "C" {
-	void image_queue_push(){
-		if(image_diff_count == 0){
-			dlog_print(DLOG_INFO, LOG_TAG_QUEUE, "Queue push");
-			image_diff_count+=1;
-		}else{
-			dlog_print(DLOG_WARN, LOG_TAG_QUEUE, "Queue not push");
-		}
-	}
-}
-
-extern "C" {
-	unsigned char * image_queue_pop(){
+	unsigned char * image_pop(){
+		_lock.lock();
 		if(image_diff_count == 1){
 			free(output_image);
 			output_image = input_image;
-			dlog_print(DLOG_INFO, LOG_TAG_QUEUE, "Queue pop");
 			image_diff_count-=1;
-		}else{
-			dlog_print(DLOG_WARN, LOG_TAG_QUEUE, "Queue not pop");
+			dlog_print(DLOG_INFO, LOG_TAG_QUEUE, "Queue pop");
 		}
-
+		_lock.unlock();
 		return output_image;
-	}
-}
-
-
-extern "C"{
-	int image_queue_is_null(){
-		return output_image != NULL;
 	}
 }
