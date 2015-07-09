@@ -220,50 +220,24 @@ extern "C" {
 
 extern "C" {
 	void image_queue_push(){
-
-		if(queue_rear == IMAGE_QUEUE_SIZE){
-			dlog_print(DLOG_VERBOSE, LOG_TAG_QUEUE, "Queue push is max - initialize rear");
-			queue_rear = 0;
-		}
-
-		try{
-			if(image_diff_count == 0){
-				buffer_queue[queue_rear] = input_image;
-				dlog_print(DLOG_VERBOSE, LOG_TAG_QUEUE, "Queue push %d", queue_rear);
-				queue_rear += 1;
-				image_diff_count+=1;
-			}
-		}catch (const std::exception& ex) {
-			dlog_print(DLOG_ERROR, LOG_TAG_QUEUE, "Queue pop %s", ex.what());
+		if(image_diff_count == 0){
+			dlog_print(DLOG_INFO, LOG_TAG_QUEUE, "Queue push");
+			image_diff_count+=1;
+		}else{
+			dlog_print(DLOG_WARN, LOG_TAG_QUEUE, "Queue not push");
 		}
 	}
 }
 
 extern "C" {
 	unsigned char * image_queue_pop(){
-		int free_index = queue_front == 0 ? IMAGE_QUEUE_SIZE-1 : queue_front-1;
-
-		if(queue_rear == queue_front){
-			return output_image;
-		}
-
-		if(queue_front == IMAGE_QUEUE_SIZE){
-			dlog_print(DLOG_VERBOSE, LOG_TAG_QUEUE, "Queue pop is max - initialize front");
-			queue_front = 0;
-		}
-
-		try{
-			if(image_diff_count == 1){
-				output_image = buffer_queue[queue_front];
-				dlog_print(DLOG_VERBOSE, LOG_TAG_QUEUE, "Queue pop %d", queue_front);
-				queue_front+=1;
-				image_diff_count-=1;
-				if(buffer_queue[free_index] != NULL){
-					free(buffer_queue[free_index]);
-				}
-			}
-		}catch (const std::exception& ex) {
-			dlog_print(DLOG_ERROR, LOG_TAG_QUEUE, "Queue pop %s", ex.what());
+		if(image_diff_count == 1){
+			free(output_image);
+			output_image = input_image;
+			dlog_print(DLOG_INFO, LOG_TAG_QUEUE, "Queue pop");
+			image_diff_count-=1;
+		}else{
+			dlog_print(DLOG_WARN, LOG_TAG_QUEUE, "Queue not pop");
 		}
 
 		return output_image;
@@ -276,18 +250,3 @@ extern "C"{
 		return output_image != NULL;
 	}
 }
-
-extern "C" {
-	void free_queue(){
-		_lock.lock();
-		for(int i = 0; i < IMAGE_QUEUE_SIZE; i++){
-			if(buffer_queue[i] != NULL){
-				free(buffer_queue[i]);
-			}else{
-				break;
-			}
-		}
-		_lock.unlock();
-	}
-}
-
