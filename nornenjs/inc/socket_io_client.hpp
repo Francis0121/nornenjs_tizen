@@ -1,11 +1,7 @@
-/*
- * socket_io_client.hpp
- *
- *  Created on: Apr 7, 2015
- *      Author: hyok
- */
+#include "nornenjs.h"
 #include <Elementary.h>
-#include <dlog.h>
+#include <dlog.h>s
+
 static int LOOP_FLAG = 1;
 
 #ifdef __cplusplus
@@ -56,30 +52,30 @@ void emit_zoom(float positionZ);
 #ifdef __cplusplus
 extern "C"
 #endif
-void free_que();
+void free_queue();
 
 #ifdef __cplusplus
 extern "C"
 #endif
-void fresh_que();
+void image_queue_push();
 
 #ifdef __cplusplus
 extern "C"
 #endif
-void que_in(unsigned char * inputBuf);
+unsigned char * image_queue_pop();
 
 #ifdef __cplusplus
 extern "C"
 #endif
-unsigned char * que_pop();
+int image_queue_is_null();
 
 #ifdef __cplusplus
 extern "C"
 #endif
-unsigned char *image;
+unsigned char *input_image;
+unsigned char *output_image;
 
-int sizeBuf;
-int err;
-int bufWidth;
-int bufHeight;
-
+int image_buffer_width;
+int image_buffer_height;
+int global_binary_data_size;
+int image_bind_error;

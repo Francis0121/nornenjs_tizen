@@ -1,4 +1,3 @@
-#include "nornenjs.h"
 #include "sio_client.h"
 #include "socket_io_client.hpp"
 
@@ -12,8 +11,6 @@
 #include <sstream>
 #include <image_util.h>
 
-#define QSIZE 5
-
 using namespace sio;
 using namespace std;
 
@@ -21,8 +18,13 @@ std::mutex _lock;
 std::condition_variable_any _cond;
 bool connect_finish = false;
 
-unsigned char * bufferQue[6];
-int count = -1;
+
+#define LOG_TAG_QUEUE "nornenjs_queue"
+
+unsigned char * buffer_queue[IMAGE_QUEUE_SIZE];
+int queue_front = 0;
+int queue_rear = 0;
+int image_diff_count = 0;
 
 class connection_listener
 {
@@ -74,77 +76,62 @@ extern "C" {
 	void socket_io_client(void *data)
 	{
 		appdata_s *ad = (appdata_s *)data;
-		err = -9;//초기화
-		dlog_print(DLOG_VERBOSE, LOG_TAG, "Socket.io function start");
+		image_bind_error = SOCKET_IMAGE_BIND_ERROR; // Initialzie Error Code
+
+		dlog_print(DLOG_VERBOSE, LOG_TAG_QUEUE, "Socket.io function start");
 
 		connection_listener l(h);
 		h.set_connect_listener(std::bind(&connection_listener::on_connected, &l));
 		h.set_close_listener(std::bind(&connection_listener::on_close, &l,std::placeholders::_1));
 		h.set_fail_listener(std::bind(&connection_listener::on_fail, &l));
-		h.connect("http://112.108.40.166:5000");
+		h.connect(SOCKET_URI);
 
 		_lock.lock();
-		if(!connect_finish)
-		{
+		if(!connect_finish){
 			_cond.wait(_lock);
 		}
 		_lock.unlock();
-		dlog_print(DLOG_VERBOSE, LOG_TAG, "Socket.io connect finish");
 
-		// ~ CUDA Memory Initialize
+		// CUDA Memory Initialize
 		std::ostringstream init_buf;
 		init_buf << ad->volume_number;
-
 		std::string init_json = "{ \"number\" : \"" + init_buf.str() +"\" } ";
 		h.emit("tizenInit", init_json);
-		dlog_print(DLOG_VERBOSE, LOG_TAG, "Emit \"tizenInit\" message\n");
 
-		// ~ After Memory Init. Do First tizen request image
-		h.bind_event("loadCudaMemory",[&](string const& name, message::ptr const& data, bool isAck,message::ptr &ack_resp){//message
+		// After Memory Init. Do First tizen request image
+		h.bind_event("loadCudaMemory",[&](string const& name, message::ptr const& data, bool isAck,message::ptr &ack_resp){
 			_lock.lock();
-
-			dlog_print(DLOG_VERBOSE, LOG_TAG, "Launched load cuda memory \n");
-
-			// ~ Tizen Requset
+			dlog_print(DLOG_VERBOSE, LOG_TAG_QUEUE, "Launched load cuda memory");
 			h.emit("tizenQuality", "");
-
 			_lock.unlock();
 		});
 
-		h.bind_event("tizenJpeg", [&](string const& name, message::ptr const& data, bool isAck,message::ptr &ack_resp){//message
+		// Image Streaming
+		h.bind_event("tizenJpeg", [&](string const& name, message::ptr const& data, bool isAck,message::ptr &ack_resp){
 			_lock.lock();
+			dlog_print(DLOG_VERBOSE, LOG_TAG_QUEUE, "Bind tizen Jpeg");
 
-			dlog_print(DLOG_VERBOSE, LOG_TAG, "Bind tizen Jpeg");
+			int binary_data_size = data->get_map()["stream"]->get_map()["size"]->get_int();
+			global_binary_data_size = binary_data_size;
 
-			int size = data->get_map()["stream"]->get_map()["size"]->get_int();
-			shared_ptr<const string> s_binary = data->get_map()["stream"]->get_map()["buffer"]->get_binary();
-			string buffer = *s_binary;
-			char* textBuf = NULL;
-			textBuf = (char *)buffer.c_str();//함수화 하기
+			shared_ptr<const string> image_binary_data = data->get_map()["stream"]->get_map()["buffer"]->get_binary();
+			string image_string = *image_binary_data;
+			char* image_char = (char *) image_string.c_str();
 
-			err = -9;
-			sizeBuf = size;//순서?
+			image_bind_error = SOCKET_IMAGE_BIND_ERROR;
 
-			unsigned int decodeBufSize;
-
-			err = image_util_decode_jpeg_from_memory((unsigned char *)textBuf, sizeBuf, IMAGE_UTIL_COLORSPACE_RGBA8888, &image, &bufWidth, &bufHeight, &decodeBufSize);
-
-			bufferQue[++count] = image; // TODO convert func que_in(image);
-
-			if(!err)//IMAGE_UTIL_ERROR_NONE != error
-			{
-				if(count == QSIZE)
-					fresh_que();
-			}
+			unsigned int decode_buf_size;
+			image_bind_error = image_util_decode_jpeg_from_memory((unsigned char *)image_char, global_binary_data_size, IMAGE_UTIL_COLORSPACE_RGBA8888, &input_image, &image_buffer_width, &image_buffer_height, &decode_buf_size);
+			image_queue_push();
 
 			_lock.unlock();
 		});
 
-		dlog_print(DLOG_VERBOSE, LOG_TAG, "Bind event listener\n");
+		dlog_print(DLOG_VERBOSE, LOG_TAG_QUEUE, "Bind event listener\n");
 
 		while(LOOP_FLAG){}
 
-		dlog_print(DLOG_VERBOSE, LOG_TAG, "Socket.io function close");
+		dlog_print(DLOG_VERBOSE, LOG_TAG_QUEUE, "Socket.io function close");
 	}
 }
 
@@ -232,48 +219,84 @@ extern "C" {
 }
 
 extern "C" {
-	void fresh_que()
-	{
-		for(int i = 0; i < 5; i++)
-		{
-			free(bufferQue[i]);
-			bufferQue[i] = NULL;
+	void image_queue_push(){
+
+		if(queue_rear == IMAGE_QUEUE_SIZE){
+			dlog_print(DLOG_VERBOSE, LOG_TAG_QUEUE, "Queue push is max - initialize rear");
+			queue_rear = 0;
 		}
-		bufferQue[0] = bufferQue[5];
-		count = -1;
+
+		try{
+			if(image_diff_count == 0){
+				buffer_queue[queue_rear] = input_image;
+				dlog_print(DLOG_VERBOSE, LOG_TAG_QUEUE, "Queue push %d", queue_rear);
+				queue_rear += 1;
+				image_diff_count+=1;
+			}
+		}catch (const std::exception& ex) {
+			dlog_print(DLOG_ERROR, LOG_TAG_QUEUE, "Queue pop %s", ex.what());
+		}
 	}
 }
 
 extern "C" {
-	void que_in(unsigned char * inputBuf)
-	{
-		bufferQue[++count] = inputBuf;
+	unsigned char * image_queue_pop(){
+		int free_index = 0;
+		switch(queue_front){
+			case 0:
+				free_index = IMAGE_QUEUE_SIZE-2;
+				break;
+			case 1:
+				free_index = IMAGE_QUEUE_SIZE-1;
+				break;
+			default:
+				free_index = queue_front-2;
+		}
+
+		if(queue_rear == queue_front){
+			return output_image;
+		}
+
+		if(queue_front == IMAGE_QUEUE_SIZE){
+			dlog_print(DLOG_VERBOSE, LOG_TAG_QUEUE, "Queue pop is max - initialize front");
+			queue_front = 0;
+		}
+
+		try{
+			if(image_diff_count == 1){
+				output_image = buffer_queue[queue_front];
+				dlog_print(DLOG_VERBOSE, LOG_TAG_QUEUE, "Queue pop %d", queue_front);
+				queue_front+=1;
+				image_diff_count-=1;
+				if(buffer_queue[free_index] != NULL){
+					free(buffer_queue[free_index]);
+				}
+			}
+		}catch (const std::exception& ex) {
+			dlog_print(DLOG_ERROR, LOG_TAG_QUEUE, "Queue pop %s", ex.what());
+		}
+
+		return output_image;
+	}
+}
+
+
+extern "C"{
+	int image_queue_is_null(){
+		return output_image != NULL;
 	}
 }
 
 extern "C" {
-	unsigned char * que_pop()
-	{
-		return image;
-	}
-}
-
-extern "C" {
-	void free_que(){
+	void free_queue(){
 		_lock.lock();
-		dlog_print(DLOG_VERBOSE, LOG_TAG, "free que start");
-		for(int i = 0; i < 6; i++){
-			dlog_print(DLOG_VERBOSE, LOG_TAG, "free start if");
-			if(bufferQue[i] != NULL){
-				dlog_print(DLOG_VERBOSE, LOG_TAG, "free do %d", i);
-				free(bufferQue[i]);
+		for(int i = 0; i < IMAGE_QUEUE_SIZE; i++){
+			if(buffer_queue[i] != NULL){
+				free(buffer_queue[i]);
 			}else{
-				dlog_print(DLOG_VERBOSE, LOG_TAG, "free break");
 				break;
 			}
-			dlog_print(DLOG_VERBOSE, LOG_TAG, "free end if");
 		}
-		dlog_print(DLOG_VERBOSE, LOG_TAG, "free que end");
 		_lock.unlock();
 	}
 }

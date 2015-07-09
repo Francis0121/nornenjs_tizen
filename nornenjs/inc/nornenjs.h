@@ -17,6 +17,10 @@
 #endif
 
 #define APPDATA_KEY "AppData"
+// reference "sockect_io_client" source code
+#define SOCKET_URI "http://112.108.40.166:5000"
+#define IMAGE_QUEUE_SIZE 50
+#define SOCKET_IMAGE_BIND_ERROR -9
 
 typedef struct appdata {
 	// Default Wrapper
@@ -32,12 +36,12 @@ typedef struct appdata {
 	Evas_Object *render_view;
 
 	// Touch event
-	Eina_Bool mouse_down : 1;
+	Eina_Bool mouse_down :1;
 	float rotation_x;
 	float rotation_y;
 
 	// Multi touch event
-	Eina_Bool multi_mouse_down : 1;
+	Eina_Bool multi_mouse_down :1;
 	float old_vector_x1;
 	float old_vector_y1;
 	float old_vector_x2;
@@ -47,11 +51,11 @@ typedef struct appdata {
 	float div;
 
 	// Brightness
-	Eina_Bool is_brightness : 1;
+	Eina_Bool is_brightness :1;
 	Evas_Object *bright_slider;
 
 	// OTF
-	Eina_Bool is_otf : 1;
+	Eina_Bool is_otf :1;
 	Evas_Object *otf_slider;
 
 	// Data

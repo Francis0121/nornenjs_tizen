@@ -116,12 +116,12 @@ void draw_gl(Evas_Object *obj) {
 	ELEMENTARY_GLVIEW_USE(obj);
 	ad = evas_object_data_get(obj, APPDATA_KEY);
 
-	if (que_pop() != NULL) {
+	if (image_queue_is_null) {
 
 		pthread_mutex_lock(&mutex);
 
-		if (!err) {
-			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, bufWidth, bufHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, que_pop());
+		if (!image_bind_error) {
+			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, image_buffer_width, image_buffer_height, 0, GL_RGBA, GL_UNSIGNED_BYTE, image_queue_pop());
 			glTexParameterx(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 			glTexParameterx(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 		}
