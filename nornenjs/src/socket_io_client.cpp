@@ -241,17 +241,7 @@ extern "C" {
 
 extern "C" {
 	unsigned char * image_queue_pop(){
-		int free_index = 0;
-		switch(queue_front){
-			case 0:
-				free_index = IMAGE_QUEUE_SIZE-2;
-				break;
-			case 1:
-				free_index = IMAGE_QUEUE_SIZE-1;
-				break;
-			default:
-				free_index = queue_front-2;
-		}
+		int free_index = queue_front == 0 ? IMAGE_QUEUE_SIZE-1 : queue_front-1;
 
 		if(queue_rear == queue_front){
 			return output_image;
