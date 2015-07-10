@@ -61,6 +61,8 @@ void destroy_gles(Evas_Object *obj) {
 
 	ELEMENTARY_GLVIEW_USE(obj);
 	evas_object_data_get(obj, APPDATA_KEY);
+
+	clear_image_pointer();
 }
 
 void resize_gl(Evas_Object *obj) {

@@ -1,13 +1,9 @@
 #include "nornenjs.h"
-#include <Elementary.h>
-#include <dlog.h>s
-
-static int LOOP_FLAG = 1;
 
 #ifdef __cplusplus
 extern "C"
 #endif
-void turn_off_flag();
+void socket_io_client_close();
 
 #ifdef __cplusplus
 extern "C"
@@ -53,6 +49,11 @@ void emit_zoom(float positionZ);
 extern "C"
 #endif
 unsigned char * image_pop();
+
+#ifdef __cplusplus
+extern "C"
+#endif
+void clear_image_pointer();
 
 unsigned char *input_image;
 unsigned char *output_image;

@@ -53,18 +53,22 @@ public:
     }
 };
 
-extern "C" {
-	/**
-	 * LOOP FLAG - Terminater application - while statement finish
-	 */
-	void turn_off_flag()
-	{
-		LOOP_FLAG = 0;
-	}
-}
+sio::client h;
 
 extern "C" {
-	sio::client h;
+	void socket_io_client_close(){
+
+		if(!h.connected()){
+			dlog_print(DLOG_INFO, LOG_TAG_QUEUE, "Socket.io not conntected - not closed socket");
+			return;
+		}
+
+		h.unbind_event("loadCudaMemory");
+		h.unbind_event("tizenJpeg");
+		h.close();
+
+		dlog_print(DLOG_VERBOSE, LOG_TAG_QUEUE, "Socket.io closed");
+	}
 }
 
 extern "C" {
@@ -127,10 +131,6 @@ extern "C" {
 		});
 
 		dlog_print(DLOG_VERBOSE, LOG_TAG_QUEUE, "Bind event listener\n");
-
-		while(LOOP_FLAG){}
-
-		dlog_print(DLOG_VERBOSE, LOG_TAG_QUEUE, "Socket.io function close");
 	}
 }
 
@@ -228,5 +228,15 @@ extern "C" {
 		}
 		_lock.unlock();
 		return output_image;
+	}
+}
+
+extern "C"{
+	void clear_image_pointer(){
+		_lock.lock();
+		image_diff_count = 0;
+		input_image = NULL;
+		dlog_print(DLOG_INFO, LOG_TAG_QUEUE, "Output Image free");
+		_lock.unlock();
 	}
 }

@@ -155,13 +155,7 @@ static void destroy_anim(void *data, Evas *evas, Evas_Object *obj, void *event_i
 static void destroy_thread_cb(void *data){
 	appdata_s *ad = data;
 	dlog_print(DLOG_VERBOSE, LOG_TAG, "call destory thread");
-
-	turn_off_flag();
-
-// TODO call free_que function -> application dead
-//	free_que();
-//	if(image)
-//		free(image);
+	socket_io_client_close();
 }
 
 static void glview_create(appdata_s *ad){
