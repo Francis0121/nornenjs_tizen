@@ -6,18 +6,22 @@
 
 static double initial_time = 0;
 
+static char *items[] = {
+	"BigHead", "Abdomen"
+};
+
+static char* gl_text_get_cb(void *data, Evas_Object *obj, const char *part)
+{
+	int index = (int) data;
+	return strdup(items[index]);
+}
+
 static void win_delete_request_cb(void *data, Evas_Object *obj, void *event_info) {
 	ui_app_exit();
 }
 
 static double get_current_time(void) {
 	return ecore_time_get() - initial_time;
-}
-
-static void list_selected_cb(void *data, Evas_Object *obj, void *event_info) {
-	Elm_Object_Item *it = event_info;
-	elm_list_item_selected_set(it, EINA_FALSE);
-	dlog_print(DLOG_VERBOSE, LOG_TAG, "list_selected_cb");
 }
 
 // ~ Back Button Active 시 가장 마지막에 대한 화면을 지금 mainList로 해주는 역할을 수행함. (아니면 해당 부분을 종료하도록함)
@@ -28,22 +32,26 @@ static Eina_Bool naviframe_pop_cb(void *data, Elm_Object_Item *it){
 }
 
 static Evas_Object * create_main_list(appdata_s *ad) {
-	Evas_Object *list;
+	static Elm_Genlist_Item_Class itc;
+	Evas_Object *genlist;
+	int i = 0;
 
-	/* List */
-	list = elm_list_add(ad->nf);
-	elm_list_mode_set(list, ELM_LIST_SCROLL);
-	evas_object_smart_callback_add(list, "selected", list_selected_cb, NULL);
+	genlist = elm_genlist_add(ad->nf);
+	evas_object_size_hint_weight_set(genlist, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+	evas_object_size_hint_align_set(genlist, EVAS_HINT_FILL, EVAS_HINT_FILL);
 
-	/* Main Menu Items Here */
-	ad->volume_number = 1;
-	elm_list_item_append(list, "Bighead", NULL, NULL, volume_render_cb, ad);
-	elm_list_item_append(list, "Abdomen", NULL, NULL, volume_render_cb, ad);
-	elm_list_item_append(list, "Editfield", NULL, NULL, editfield_cb, ad);
+	itc.item_style = "default";
+	itc.func.text_get = gl_text_get_cb;
+	itc.func.content_get = NULL;
+	itc.func.state_get = NULL;
+	itc.func.del = NULL;
 
-	elm_list_go(list);
+	for (i = 0; i < 2; i++) {
+		elm_genlist_item_append(genlist, &itc, (void *) i, NULL, ELM_GENLIST_ITEM_NONE, volume_render_cb, ad);
+	}
+	evas_object_show(genlist);
 
-	return list;
+	return genlist;
 }
 
 static Eina_Bool main_page_timer_cb(void *data EINA_UNUSED) {

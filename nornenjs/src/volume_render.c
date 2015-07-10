@@ -227,9 +227,12 @@ static void create_volume_render_view(appdata_s *ad){
 }
 
 void volume_render_cb(void *data, Evas_Object *obj, void *event_info){
+	int index = 0;
 	appdata_s *ad = (appdata_s *)data;
-	Elm_Object_Item *nav_item;
-	dlog_print(DLOG_VERBOSE, LOG_TAG, "list_selected_cb");
+	Elm_Object_Item *item = event_info, *nav_item;
+
+	index = (int)elm_object_item_data_get(item);
+	dlog_print(DLOG_VERBOSE, LOG_TAG, "volume_render_cb %d", index);
 
 	int thread_error_number = 0;
 	if ((thread_error_number = pthread_create(&thread_id, NULL, socket_io_client, ad))) {
