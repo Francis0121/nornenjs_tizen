@@ -78,7 +78,7 @@ extern "C" {
 		appdata_s *ad = (appdata_s *)data;
 		image_bind_error = SOCKET_IMAGE_BIND_ERROR; // Initialzie Error Code
 
-		dlog_print(DLOG_VERBOSE, LOG_TAG_QUEUE, "Socket.io function start");
+		dlog_print(DLOG_VERBOSE, LOG_TAG_QUEUE, "Socket.io function start %d", ad->volume_number);
 
 		connection_listener l(h);
 		h.set_connect_listener(std::bind(&connection_listener::on_connected, &l));

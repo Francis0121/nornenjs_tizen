@@ -22,6 +22,10 @@
 #define IMAGE_QUEUE_SIZE 50
 #define SOCKET_IMAGE_BIND_ERROR -9
 
+static char *items[] = {
+	"BigHead", "Abdomen"
+};
+
 typedef struct appdata {
 	// Default Wrapper
 	Evas_Object *win;

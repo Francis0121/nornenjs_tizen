@@ -6,10 +6,6 @@
 
 static double initial_time = 0;
 
-static char *items[] = {
-	"BigHead", "Abdomen"
-};
-
 static char* gl_text_get_cb(void *data, Evas_Object *obj, const char *part)
 {
 	int index = (int) data;
