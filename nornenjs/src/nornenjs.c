@@ -15,7 +15,8 @@ static double initial_time = 0;
 static char* gl_text_get_cb(void *data, Evas_Object *obj, const char *part)
 {
 	int index = (int) data;
-	return strdup(items[index]);
+	//return strdup(items[index]);
+	return get_title_from_index(index);
 }
 
 static void win_delete_request_cb(void *data, Evas_Object *obj, void *event_info) {
@@ -40,7 +41,34 @@ static Evas_Object * create_main_list(appdata_s *ad) {
 	char* response_buffer;
 	json_value *object_map, *volumes, *volume;
 	json_value *title_map, *volumeDataPn_map;
-	json_value *title, *volumeDataPn;
+
+	response_buffer = http_post(VOLUME_LIST_URL);
+	dlog_print(DLOG_VERBOSE, LOG_TAG, "Response data %s", response_buffer);
+
+	object_map = json_parse(response_buffer, strlen(response_buffer));
+	if(object_map->type == json_object){
+
+		volumes = object_map->u.object.values[0].value;
+		length = volumes->u.array.length;
+
+		clear_volume_list_map();
+
+		for(x=0; x<length; x++){
+			volume = volumes->u.array.values[x];
+
+			volumeDataPn_map = volume->u.object.values[0].value;
+			dlog_print(DLOG_VERBOSE, LOG_TAG, "int: %s\n", volumeDataPn_map->u.string.ptr);
+
+			title_map = volume->u.object.values[3].value;
+			dlog_print(DLOG_VERBOSE, LOG_TAG, "string: %s\n", title_map->u.string.ptr);
+
+			insert_map(1, x, volumeDataPn_map->u.string.ptr);
+			insert_map(2, x, title_map->u.string.ptr);
+		}
+	}
+
+	json_value_free(object_map);
+
 
 	genlist = elm_genlist_add(ad->nf);
 	evas_object_size_hint_weight_set(genlist, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
@@ -52,32 +80,12 @@ static Evas_Object * create_main_list(appdata_s *ad) {
 	itc.func.state_get = NULL;
 	itc.func.del = NULL;
 
-	for (i = 0; i < 2; i++) {
+	for (i = 0; i < length; i++) {
 		elm_genlist_item_append(genlist, &itc, (void *) i, NULL, ELM_GENLIST_ITEM_NONE, volume_render_cb, ad);
 	}
 	evas_object_show(genlist);
 
-	response_buffer = http_post(VOLUME_LIST_URL);
-	dlog_print(DLOG_VERBOSE, LOG_TAG, "Response data %s", response_buffer);
 
-	object_map = json_parse(response_buffer, strlen(response_buffer));
-	if(object_map->type == json_object){
-
-		volumes = object_map->u.object.values[0].value;
-		length = volumes->u.array.length;
-
-		for(x=0; x<length; x++){
-			volume = volumes->u.array.values[x];
-
-			volumeDataPn_map = volume->u.object.values[0].value;
-			dlog_print(DLOG_VERBOSE, LOG_TAG, "int: %s\n", volumeDataPn_map->u.string.ptr);
-
-			title_map = volume->u.object.values[3].value;
-			dlog_print(DLOG_VERBOSE, LOG_TAG, "string: %s\n", title_map->u.string.ptr);
-		}
-	}
-
-	json_value_free(object_map);
 
 
 	return genlist;
