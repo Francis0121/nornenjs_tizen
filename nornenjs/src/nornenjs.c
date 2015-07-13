@@ -1,6 +1,7 @@
 #include <tizen.h>
 #include "nornenjs.h"
 #include "curl_post.hpp"
+#include "json.h"
 
 #define SIGN_URL "http://112.108.40.166:10000/mobile/signIn"
 #define VOLUME_LIST_URL "http://112.108.40.166:10000/tizen/list"
@@ -10,6 +11,62 @@
 #define DELAY	3.0
 
 static double initial_time = 0;
+
+static void process_value(json_value* value);
+
+static void process_object(json_value* value){
+	int length, x;
+	if (value == NULL) {
+		return;
+	}
+	length = value->u.object.length;
+	for (x = 0; x < length; x++) {
+		dlog_print(DLOG_VERBOSE, LOG_TAG, "object[%d].name = %s\n", x, value->u.object.values[x].name);
+		process_value(value->u.object.values[x].value);
+	}
+}
+
+static void process_array(json_value* value){
+	int length, x;
+	if (value == NULL) {
+		return;
+	}
+	dlog_print(DLOG_VERBOSE, LOG_TAG, "array");
+	length = value->u.array.length;
+	for (x = 0; x < length; x++) {
+		process_value(value->u.array.values[x]);
+	}
+}
+
+static void process_value(json_value* value){
+	if (value == NULL) {
+		return;
+	}
+	switch (value->type) {
+		case json_none:
+			dlog_print(DLOG_VERBOSE, LOG_TAG, "none");
+			break;
+		case json_object:
+			process_object(value);
+			break;
+		case json_array:
+			process_array(value);
+			break;
+		case json_integer:
+			dlog_print(DLOG_VERBOSE, LOG_TAG, "int: %d\n", value->u.integer);
+			break;
+		case json_double:
+			dlog_print(DLOG_VERBOSE, LOG_TAG, "double: %f\n", value->u.dbl);
+			break;
+		case json_string:
+			dlog_print(DLOG_VERBOSE, LOG_TAG, "string: %s\n", value->u.string.ptr);
+			break;
+		case json_boolean:
+			dlog_print(DLOG_VERBOSE, LOG_TAG, "bool: %d\n", value->u.boolean);
+			break;
+	}
+}
+
 
 static char* gl_text_get_cb(void *data, Evas_Object *obj, const char *part)
 {
@@ -35,8 +92,11 @@ static Eina_Bool naviframe_pop_cb(void *data, Elm_Object_Item *it){
 static Evas_Object * create_main_list(appdata_s *ad) {
 	static Elm_Genlist_Item_Class itc;
 	Evas_Object *genlist;
-	int i = 0;
+	int i = 0, x = 0, length;
 	char* response_buffer;
+	json_value *object_map, *volumes, *volume;
+	json_value *title_map, *volumeDataPn_map;
+	json_value *title, *volumeDataPn;
 
 	genlist = elm_genlist_add(ad->nf);
 	evas_object_size_hint_weight_set(genlist, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
@@ -53,15 +113,36 @@ static Evas_Object * create_main_list(appdata_s *ad) {
 	}
 	evas_object_show(genlist);
 
-	// TODO Restful API Test
-	response_buffer = http_post(SIGN_URL);
+	// TODO Restful API Teprocess_object
+	/*response_buffer = http_post(SIGN_URL);
 	dlog_print(DLOG_VERBOSE, LOG_TAG, "Response data %s", response_buffer);
+
+	response_buffer = http_post(VOLUME_DATA_URL);
+	dlog_print(DLOG_VERBOSE, LOG_TAG, "Response data %s", response_buffer);*/
 
 	response_buffer = http_post(VOLUME_LIST_URL);
 	dlog_print(DLOG_VERBOSE, LOG_TAG, "Response data %s", response_buffer);
 
-	response_buffer = http_post(VOLUME_DATA_URL);
-	dlog_print(DLOG_VERBOSE, LOG_TAG, "Response data %s", response_buffer);
+	object_map = json_parse(response_buffer, strlen(response_buffer));
+	if(object_map->type == json_object){
+		//process_object(object_map);
+
+		volumes = object_map->u.object.values[0].value;
+		length = volumes->u.array.length;
+
+		for(x=0; x<length; x++){
+			volume = volumes->u.array.values[x];
+
+			volumeDataPn_map = volume->u.object.values[0].value;
+			dlog_print(DLOG_VERBOSE, LOG_TAG, "int: %s\n", volumeDataPn_map->u.string.ptr);
+
+			title_map = volume->u.object.values[3].value;
+			dlog_print(DLOG_VERBOSE, LOG_TAG, "string: %s\n", title_map->u.string.ptr);
+		}
+	}
+
+	json_value_free(object_map);
+
 
 	return genlist;
 }
