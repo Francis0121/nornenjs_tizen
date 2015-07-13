@@ -2,6 +2,10 @@
 #include "nornenjs.h"
 #include "curl_post.hpp"
 
+#define SIGN_URL "http://112.108.40.166:10000/mobile/signIn"
+#define VOLUME_LIST_URL "http://112.108.40.166:10000/tizen/list"
+#define VOLUME_DATA_URL "http://112.108.40.166:10000/tizen/data/34"
+
 #define TIMEOUT 3.0
 #define DELAY	3.0
 
@@ -32,6 +36,7 @@ static Evas_Object * create_main_list(appdata_s *ad) {
 	static Elm_Genlist_Item_Class itc;
 	Evas_Object *genlist;
 	int i = 0;
+	char* response_buffer;
 
 	genlist = elm_genlist_add(ad->nf);
 	evas_object_size_hint_weight_set(genlist, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
@@ -49,7 +54,14 @@ static Evas_Object * create_main_list(appdata_s *ad) {
 	evas_object_show(genlist);
 
 	// TODO Restful API Test
-	curl_login_post();
+	response_buffer = http_post(SIGN_URL);
+	dlog_print(DLOG_VERBOSE, LOG_TAG, "Response data %s", response_buffer);
+
+	response_buffer = http_post(VOLUME_LIST_URL);
+	dlog_print(DLOG_VERBOSE, LOG_TAG, "Response data %s", response_buffer);
+
+	response_buffer = http_post(VOLUME_DATA_URL);
+	dlog_print(DLOG_VERBOSE, LOG_TAG, "Response data %s", response_buffer);
 
 	return genlist;
 }
