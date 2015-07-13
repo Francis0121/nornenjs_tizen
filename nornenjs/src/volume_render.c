@@ -1,5 +1,6 @@
 #include "nornenjs.h"
 #include "opengles.h"
+#include "curl_post.hpp"
 #include "socket_io_client.hpp"
 
 static pthread_t thread_id;
@@ -230,9 +231,12 @@ void volume_render_cb(void *data, Evas_Object *obj, void *event_info){
 	int index = 0;
 	appdata_s *ad = (appdata_s *)data;
 	Elm_Object_Item *item = event_info, *nav_item;
+	char *volumeDataPn;
 
 	index = (int)elm_object_item_data_get(item);
-	dlog_print(DLOG_VERBOSE, LOG_TAG, "volume_render_cb %d", index);
+	volumeDataPn = get_volumeDataPn_from_index(index);
+
+	dlog_print(DLOG_VERBOSE, LOG_TAG, "volume_render_cb %d %s", index, volumeDataPn);
 	ad->volume_number = index;
 
 	int thread_error_number = 0;

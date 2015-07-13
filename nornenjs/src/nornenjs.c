@@ -85,9 +85,6 @@ static Evas_Object * create_main_list(appdata_s *ad) {
 	}
 	evas_object_show(genlist);
 
-
-
-
 	return genlist;
 }
 
