@@ -47,6 +47,9 @@ static Evas_Object * create_main_list(appdata_s *ad) {
 	}
 	evas_object_show(genlist);
 
+	// TODO Restful API Test
+	//restful_api_test();
+
 	return genlist;
 }
 

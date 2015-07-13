@@ -1,0 +1,2 @@
+
+void curl_test();
