@@ -12,62 +12,6 @@
 
 static double initial_time = 0;
 
-static void process_value(json_value* value);
-
-static void process_object(json_value* value){
-	int length, x;
-	if (value == NULL) {
-		return;
-	}
-	length = value->u.object.length;
-	for (x = 0; x < length; x++) {
-		dlog_print(DLOG_VERBOSE, LOG_TAG, "object[%d].name = %s\n", x, value->u.object.values[x].name);
-		process_value(value->u.object.values[x].value);
-	}
-}
-
-static void process_array(json_value* value){
-	int length, x;
-	if (value == NULL) {
-		return;
-	}
-	dlog_print(DLOG_VERBOSE, LOG_TAG, "array");
-	length = value->u.array.length;
-	for (x = 0; x < length; x++) {
-		process_value(value->u.array.values[x]);
-	}
-}
-
-static void process_value(json_value* value){
-	if (value == NULL) {
-		return;
-	}
-	switch (value->type) {
-		case json_none:
-			dlog_print(DLOG_VERBOSE, LOG_TAG, "none");
-			break;
-		case json_object:
-			process_object(value);
-			break;
-		case json_array:
-			process_array(value);
-			break;
-		case json_integer:
-			dlog_print(DLOG_VERBOSE, LOG_TAG, "int: %d\n", value->u.integer);
-			break;
-		case json_double:
-			dlog_print(DLOG_VERBOSE, LOG_TAG, "double: %f\n", value->u.dbl);
-			break;
-		case json_string:
-			dlog_print(DLOG_VERBOSE, LOG_TAG, "string: %s\n", value->u.string.ptr);
-			break;
-		case json_boolean:
-			dlog_print(DLOG_VERBOSE, LOG_TAG, "bool: %d\n", value->u.boolean);
-			break;
-	}
-}
-
-
 static char* gl_text_get_cb(void *data, Evas_Object *obj, const char *part)
 {
 	int index = (int) data;
@@ -113,19 +57,11 @@ static Evas_Object * create_main_list(appdata_s *ad) {
 	}
 	evas_object_show(genlist);
 
-	// TODO Restful API Teprocess_object
-	/*response_buffer = http_post(SIGN_URL);
-	dlog_print(DLOG_VERBOSE, LOG_TAG, "Response data %s", response_buffer);
-
-	response_buffer = http_post(VOLUME_DATA_URL);
-	dlog_print(DLOG_VERBOSE, LOG_TAG, "Response data %s", response_buffer);*/
-
 	response_buffer = http_post(VOLUME_LIST_URL);
 	dlog_print(DLOG_VERBOSE, LOG_TAG, "Response data %s", response_buffer);
 
 	object_map = json_parse(response_buffer, strlen(response_buffer));
 	if(object_map->type == json_object){
-		//process_object(object_map);
 
 		volumes = object_map->u.object.values[0].value;
 		length = volumes->u.array.length;
