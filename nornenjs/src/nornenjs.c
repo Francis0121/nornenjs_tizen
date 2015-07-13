@@ -1,5 +1,6 @@
 #include <tizen.h>
 #include "nornenjs.h"
+#include "curl_post.hpp"
 
 #define TIMEOUT 3.0
 #define DELAY	3.0
@@ -48,7 +49,7 @@ static Evas_Object * create_main_list(appdata_s *ad) {
 	evas_object_show(genlist);
 
 	// TODO Restful API Test
-	//restful_api_test();
+	curl_login_post();
 
 	return genlist;
 }

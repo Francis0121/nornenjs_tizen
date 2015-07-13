@@ -1,6 +1,6 @@
 #include "sio_client.h"
 #include "socket_io_client.hpp"
-#include "curl_test.hpp"
+#include "curl_post.hpp"
 
 #include <functional>
 #include <iostream>
@@ -132,8 +132,6 @@ extern "C" {
 		});
 
 		dlog_print(DLOG_VERBOSE, LOG_TAG_QUEUE, "Bind event listener\n");
-
-		curl_test();
 	}
 }
 
