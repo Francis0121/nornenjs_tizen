@@ -26,3 +26,8 @@
 *.exe
 *.out
 *.app
+
+# remove
+SA_Report/
+crash-info/
+Debug/
