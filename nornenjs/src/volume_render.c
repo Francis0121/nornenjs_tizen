@@ -231,13 +231,9 @@ void volume_render_cb(void *data, Evas_Object *obj, void *event_info){
 	int index = 0;
 	appdata_s *ad = (appdata_s *)data;
 	Elm_Object_Item *item = event_info, *nav_item;
-	char *volumeDataPn;
 
 	index = (int)elm_object_item_data_get(item);
-	volumeDataPn = get_volumeDataPn_from_index(index);
-
-	dlog_print(DLOG_VERBOSE, LOG_TAG, "volume_render_cb %d %s", index, volumeDataPn);
-	ad->volume_number = index;
+	ad->volumeDataPn = get_volumeDataPn_from_index(index);
 
 	int thread_error_number = 0;
 	if ((thread_error_number = pthread_create(&thread_id, NULL, socket_io_client, ad))) {

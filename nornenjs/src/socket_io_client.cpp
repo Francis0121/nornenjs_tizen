@@ -20,6 +20,7 @@ std::condition_variable_any _cond;
 bool connect_finish = false;
 
 #define LOG_TAG_QUEUE "nornenjs_queue"
+#define VOLUME_DATA_URL "http://112.108.40.166:10000/tizen/data/"
 
 int image_diff_count = 0;
 
@@ -67,7 +68,6 @@ extern "C" {
 		h.unbind_event("loadCudaMemory");
 		h.unbind_event("tizenJpeg");
 		h.close();
-
 		dlog_print(DLOG_VERBOSE, LOG_TAG_QUEUE, "Socket.io closed");
 	}
 }
@@ -77,9 +77,12 @@ extern "C" {
 	void socket_io_client(void *data)
 	{
 		appdata_s *ad = (appdata_s *)data;
-		image_bind_error = SOCKET_IMAGE_BIND_ERROR; // Initialzie Error Code
+		char* ch_init_json = NULL;
+		char volume_data_url[] = VOLUME_DATA_URL;
+		image_bind_error = SOCKET_IMAGE_BIND_ERROR;
 
-		dlog_print(DLOG_VERBOSE, LOG_TAG_QUEUE, "Socket.io function start %d", ad->volume_number);
+		strcat(volume_data_url, ad->volumeDataPn);
+		ch_init_json = http_post(volume_data_url);
 
 		connection_listener l(h);
 		h.set_connect_listener(std::bind(&connection_listener::on_connected, &l));
@@ -93,16 +96,12 @@ extern "C" {
 		}
 		_lock.unlock();
 
-		// CUDA Memory Initialize
-		std::ostringstream init_buf;
-		init_buf << ad->volume_number;
-		std::string init_json = "{ \"number\" : \"" + init_buf.str() +"\" } ";
-		h.emit("tizenInit", init_json);
+		std::string str_init_json(ch_init_json);
+		h.emit("tizenInit", str_init_json);
 
 		// After Memory Init. Do First tizen request image
 		h.bind_event("loadCudaMemory",[&](string const& name, message::ptr const& data, bool isAck,message::ptr &ack_resp){
 			_lock.lock();
-			dlog_print(DLOG_VERBOSE, LOG_TAG_QUEUE, "Launched load cuda memory");
 			h.emit("tizenQuality", "");
 			_lock.unlock();
 		});
@@ -110,8 +109,6 @@ extern "C" {
 		// Image Streaming
 		h.bind_event("tizenJpeg", [&](string const& name, message::ptr const& data, bool isAck,message::ptr &ack_resp){
 			_lock.lock();
-			dlog_print(DLOG_VERBOSE, LOG_TAG_QUEUE, "Bind tizen Jpeg");
-
 			int binary_data_size = data->get_map()["stream"]->get_map()["size"]->get_int();
 			global_binary_data_size = binary_data_size;
 
@@ -125,13 +122,11 @@ extern "C" {
 			image_bind_error = image_util_decode_jpeg_from_memory((unsigned char *)image_char, global_binary_data_size, IMAGE_UTIL_COLORSPACE_RGBA8888, &input_image, &image_buffer_width, &image_buffer_height, &decode_buf_size);
 
 			if(image_diff_count == 0){
-				dlog_print(DLOG_INFO, LOG_TAG_QUEUE, "Queue push");
 				image_diff_count+=1;
 			}
 			_lock.unlock();
 		});
 
-		dlog_print(DLOG_VERBOSE, LOG_TAG_QUEUE, "Bind event listener\n");
 	}
 }
 
@@ -226,7 +221,6 @@ extern "C" {
 			free(output_image);
 			output_image = input_image;
 			image_diff_count-=1;
-			dlog_print(DLOG_INFO, LOG_TAG_QUEUE, "Queue pop");
 		}
 		_lock.unlock();
 		return output_image;

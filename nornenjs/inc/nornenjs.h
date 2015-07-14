@@ -64,6 +64,7 @@ typedef struct appdata {
 
 	// Data
 	int volume_number;
+	char* volumeDataPn;
 
 } appdata_s;
 

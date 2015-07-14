@@ -5,7 +5,6 @@
 
 #define SIGN_URL "http://112.108.40.166:10000/mobile/signIn"
 #define VOLUME_LIST_URL "http://112.108.40.166:10000/tizen/list"
-#define VOLUME_DATA_URL "http://112.108.40.166:10000/tizen/data/34"
 
 #define TIMEOUT 3.0
 #define DELAY	3.0
@@ -15,7 +14,6 @@ static double initial_time = 0;
 static char* gl_text_get_cb(void *data, Evas_Object *obj, const char *part)
 {
 	int index = (int) data;
-	//return strdup(items[index]);
 	return get_title_from_index(index);
 }
 
