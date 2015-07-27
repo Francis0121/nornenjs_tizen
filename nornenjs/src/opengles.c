@@ -20,11 +20,8 @@
 #include <pthread.h>
 
 #include "socket_io_client.hpp"
-#include "nornenjs.h"
 
 // Initialize thread
-pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
-
 #define ONEP  +1.0
 #define ONEN  -1.0
 #define ZERO   0.0

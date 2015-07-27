@@ -241,7 +241,7 @@ void volume_render_cb(void *data, Evas_Object *obj, void *event_info){
 	}
 
 	create_volume_render_view(ad);
-	nav_item = elm_naviframe_item_push(ad->nf, items[index], NULL, NULL, ad->box, NULL);
+	nav_item = elm_naviframe_item_push(ad->nf, "", NULL, NULL, ad->box, NULL);
 	elm_naviframe_item_title_visible_set(nav_item, EINA_FALSE);
 	elm_naviframe_item_pop_cb_set(nav_item, destroy_thread_cb, ad); // destory thread pop
 }

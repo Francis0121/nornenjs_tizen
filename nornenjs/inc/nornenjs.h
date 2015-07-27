@@ -17,23 +17,23 @@
 #endif
 
 #define APPDATA_KEY "AppData"
-// reference "sockect_io_client" source code
-#define SOCKET_URI "http://112.108.40.166:5000"
-#define IMAGE_QUEUE_SIZE 50
-#define SOCKET_IMAGE_BIND_ERROR -9
 
-static char *items[] = {
-	"BigHead", "Abdomen"
-};
+#define SOCKET_URI "http://112.108.40.166:5000"
+#define VOLUME_LIST_URL "http://112.108.40.166:10000/tizen/list"
+#define VOLUME_DATA_URL "http://112.108.40.166:10000/tizen/data/"
+
+#define SOCKET_IMAGE_BIND_ERROR -9
 
 typedef struct appdata {
 	// Default Wrapper
 	Evas_Object *win;
 	Evas_Object *conform;
 	Evas_Object *nf;
+
 	// First Loading View
 	Evas_Object *image;
 	Ecore_Timer *timer;
+
 	// Box (Volume Render View)
 	Ecore_Animator *anim;
 	Evas_Object *box;
@@ -65,10 +65,8 @@ typedef struct appdata {
 	// Data
 	int volume_number;
 	char* volumeDataPn;
-
 } appdata_s;
 
-void editfield_cb(void *data, Evas_Object *obj, void *event_info);
 void volume_render_cb(void *data, Evas_Object *obj, void *event_info);
 
 #endif /* __nornenjs_H__ */

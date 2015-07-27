@@ -3,8 +3,6 @@
 #include "curl_post.hpp"
 #include "json.h"
 
-#define VOLUME_LIST_URL "http://112.108.40.166:10000/tizen/list"
-
 #define TIMEOUT 3.0
 #define DELAY	3.0
 

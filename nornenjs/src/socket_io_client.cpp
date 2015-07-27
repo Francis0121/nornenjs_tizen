@@ -20,7 +20,6 @@ std::condition_variable_any _cond;
 bool connect_finish = false;
 
 #define LOG_TAG_QUEUE "nornenjs_queue"
-#define VOLUME_DATA_URL "http://112.108.40.166:10000/tizen/data/"
 
 int image_diff_count = 0;
 
@@ -199,7 +198,6 @@ extern "C" {
 	void emit_zoom(float positionZ){
 		if(zoomRequestCount == 100){
 			zoomRequestCount = 0;
-
 			return;
 		}
 
