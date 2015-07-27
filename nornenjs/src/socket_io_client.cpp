@@ -12,15 +12,14 @@
 #include <sstream>
 #include <image_util.h>
 
+#define LOG_TAG_QUEUE "nornenjs_queue"
+
 using namespace sio;
 using namespace std;
 
 std::mutex _lock;
 std::condition_variable_any _cond;
 bool connect_finish = false;
-
-#define LOG_TAG_QUEUE "nornenjs_queue"
-
 int image_diff_count = 0;
 
 class connection_listener
