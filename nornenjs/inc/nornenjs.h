@@ -52,7 +52,7 @@ typedef struct appdata {
 	float old_vector_y2;
 	float new_dist;
 	float old_dist;
-	float div;
+	float position_z;
 
 	// Brightness
 	Eina_Bool is_brightness :1;

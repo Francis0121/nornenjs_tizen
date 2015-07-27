@@ -1,5 +1,13 @@
 #include "nornenjs.h"
 
+unsigned char *input_image;
+unsigned char *output_image;
+
+int image_buffer_width;
+int image_buffer_height;
+int global_binary_data_size;
+int image_bind_error;
+
 #ifdef __cplusplus
 extern "C"
 #endif
@@ -54,11 +62,3 @@ unsigned char * image_pop();
 extern "C"
 #endif
 void clear_image_pointer();
-
-unsigned char *input_image;
-unsigned char *output_image;
-
-int image_buffer_width;
-int image_buffer_height;
-int global_binary_data_size;
-int image_bind_error;

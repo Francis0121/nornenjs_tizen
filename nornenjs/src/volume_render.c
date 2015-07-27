@@ -113,22 +113,22 @@ static void multi_mouse_move_cb(void *data, Evas *e, Evas_Object *obj, void *eve
 		if (ad->new_dist - ad->old_dist > 15) {
 
 			ad->old_dist = ad->new_dist;
-			ad->div -= (((ad->new_dist / ad->old_dist) / 50) * 10);
+			ad->position_z -= (((ad->new_dist / ad->old_dist) / 50) * 10);
 
-			if (ad->div <= 0.2f) {
-				ad->div = 0.2f;
+			if (ad->position_z <= 0.2f) {
+				ad->position_z = 0.2f;
 			}
 
-			emit_zoom(ad->div);
+			emit_zoom(ad->position_z);
 		// zoom out
 		} else if (ad->old_dist - ad->new_dist > 15) {
 
 			ad->old_dist = ad->new_dist;
-			ad->div += (((ad->new_dist / ad->old_dist) / 50) * 10);
-			if (ad->div >= 10.0f) {
-				ad->div = 10.0f;
+			ad->position_z += (((ad->new_dist / ad->old_dist) / 50) * 10);
+			if (ad->position_z >= 10.0f) {
+				ad->position_z = 10.0f;
 			}
-			emit_zoom(ad->div);
+			emit_zoom(ad->position_z);
 		}
 	}
 }
@@ -234,6 +234,7 @@ void volume_render_cb(void *data, Evas_Object *obj, void *event_info){
 
 	index = (int)elm_object_item_data_get(item);
 	ad->volumeDataPn = get_volumeDataPn_from_index(index);
+	ad->position_z = 3.0f;
 
 	int thread_error_number = 0;
 	if ((thread_error_number = pthread_create(&thread_id, NULL, socket_io_client, ad))) {
