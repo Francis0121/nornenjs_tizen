@@ -64,9 +64,14 @@ extern "C" {
 			return;
 		}
 
-		h.unbind_event("loadCudaMemory");
-		h.unbind_event("tizenJpeg");
+		h.clear_con_listeners();
+		h.clear_event_bindings();
+		h.clear_socketio_listeners();
+		h.sync_close();
 		h.close();
+
+		connect_finish = false; // important
+
 		dlog_print(DLOG_VERBOSE, LOG_TAG_QUEUE, "Socket.io closed");
 	}
 }
@@ -84,6 +89,8 @@ extern "C" {
 		strcat(volume_data_url, ad->volumeDataPn);
 		ch_init_json = http_post(volume_data_url, post_data);
 
+		dlog_print(DLOG_VERBOSE, LOG_TAG_QUEUE, "Socket.io client connect call!!");
+
 		connection_listener l(h);
 		h.set_connect_listener(std::bind(&connection_listener::on_connected, &l));
 		h.set_close_listener(std::bind(&connection_listener::on_close, &l,std::placeholders::_1));
@@ -98,6 +105,7 @@ extern "C" {
 
 		std::string str_init_json(ch_init_json);
 		h.emit("tizenInit", str_init_json);
+
 
 		// After Memory Init. Do First tizen request image
 		h.bind_event("loadCudaMemory",[&](string const& name, message::ptr const& data, bool isAck,message::ptr &ack_resp){

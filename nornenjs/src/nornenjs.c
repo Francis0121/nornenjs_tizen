@@ -53,10 +53,7 @@ static Evas_Object * create_main_list(appdata_s *ad) {
 			volume = volumes->u.array.values[x];
 
 			volumeDataPn_map = volume->u.object.values[0].value;
-			dlog_print(DLOG_VERBOSE, LOG_TAG, "int: %s\n", volumeDataPn_map->u.string.ptr);
-
 			title_map = volume->u.object.values[3].value;
-			dlog_print(DLOG_VERBOSE, LOG_TAG, "string: %s\n", title_map->u.string.ptr);
 
 			insert_map(1, x, volumeDataPn_map->u.string.ptr);
 			insert_map(2, x, title_map->u.string.ptr);

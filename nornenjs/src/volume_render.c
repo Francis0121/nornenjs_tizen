@@ -53,7 +53,6 @@ static void mouse_move_cb(void *data, Evas *e, Evas_Object *obj, void *event_inf
 	appdata_s *ad = data;
 
 	if (ad->mouse_down && !ad->multi_mouse_down) {
-		dlog_print(DLOG_VERBOSE, LOG_TAG, "single mouse move");
 		ad->rotation_x += (ev->cur.canvas.x - ev->prev.canvas.x) / 10.0;
 		ad->rotation_y += (ev->cur.canvas.y - ev->prev.canvas.y) / 10.0;
 		emit_rotation(ad->rotation_x, ad->rotation_y);
@@ -86,8 +85,6 @@ static float spacing(float x1, float y1, float x2, float y2) {
 static void multi_mouse_down_cb(void *data, Evas *e, Evas_Object *obj, void *event_info) {
 	Evas_Event_Multi_Move *ev = (Evas_Event_Multi_Move *) event_info;
 	appdata_s *ad = data;
-
-	dlog_print(DLOG_VERBOSE, LOG_TAG, "multi mouse down");
 
 	ad->multi_mouse_down = EINA_TRUE;
 
