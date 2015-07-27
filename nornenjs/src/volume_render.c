@@ -231,7 +231,10 @@ void volume_render_cb(void *data, Evas_Object *obj, void *event_info){
 
 	index = (int)elm_object_item_data_get(item);
 	ad->volumeDataPn = get_volumeDataPn_from_index(index);
+
 	ad->position_z = 3.0f;
+	ad->rotation_x = 0.0f;
+	ad->rotation_y = 0.0f;
 
 	int thread_error_number = 0;
 	if ((thread_error_number = pthread_create(&thread_id, NULL, socket_io_client, ad))) {

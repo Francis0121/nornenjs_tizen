@@ -40,7 +40,6 @@ static void set_perspective(Evas_Object *obj, float fovDegree, int w, int h,floa
 void init_gles(Evas_Object *obj) {
 	dlog_print(DLOG_VERBOSE, LOG_TAG, "INIT_GLES function (init_gles)");
 	ELEMENTARY_GLVIEW_USE(obj);
-	evas_object_data_get(obj, APPDATA_KEY);
 
 	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 
@@ -55,10 +54,6 @@ void init_gles(Evas_Object *obj) {
 
 void destroy_gles(Evas_Object *obj) {
 	dlog_print(DLOG_VERBOSE, LOG_TAG, "destroy_gles");
-
-	ELEMENTARY_GLVIEW_USE(obj);
-	evas_object_data_get(obj, APPDATA_KEY);
-
 	clear_image_pointer();
 }
 
@@ -72,10 +67,8 @@ void resize_gl(Evas_Object *obj) {
 }
 
 static void draw_volume_view(Evas_Object *obj) {
-	appdata_s *ad;
 
 	ELEMENTARY_GLVIEW_USE(obj);
-	ad = evas_object_data_get(obj, APPDATA_KEY);
 
 	static const float VERTICES[] = {
 			-2.0f, -2.0f, 0.0f,	// 3, Left Bottom
@@ -111,18 +104,14 @@ static void draw_volume_view(Evas_Object *obj) {
 }
 
 void draw_gl(Evas_Object *obj) {
-	appdata_s *ad;
 	ELEMENTARY_GLVIEW_USE(obj);
-	ad = evas_object_data_get(obj, APPDATA_KEY);
 
 	if (input_image != NULL) {
-
 		if (!image_bind_error) {
 			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, image_buffer_width, image_buffer_height, 0, GL_RGBA, GL_UNSIGNED_BYTE, image_pop());
 			glTexParameterx(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 			glTexParameterx(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 		}
-
 	}
 
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
