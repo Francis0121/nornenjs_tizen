@@ -79,10 +79,11 @@ extern "C" {
 		appdata_s *ad = (appdata_s *)data;
 		char* ch_init_json = NULL;
 		char volume_data_url[] = VOLUME_DATA_URL;
+		char post_data[] = "";
 		image_bind_error = SOCKET_IMAGE_BIND_ERROR;
 
 		strcat(volume_data_url, ad->volumeDataPn);
-		ch_init_json = http_post(volume_data_url);
+		ch_init_json = http_post(volume_data_url, post_data);
 
 		connection_listener l(h);
 		h.set_connect_listener(std::bind(&connection_listener::on_connected, &l));

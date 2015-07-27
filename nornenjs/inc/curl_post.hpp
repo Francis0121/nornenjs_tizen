@@ -27,4 +27,4 @@ char* get_title_from_index(int index);
 #ifdef __cplusplus
 extern "C"
 #endif
-char* http_post(char* send_url);
+char* http_post(char* send_url, const char *post_data);

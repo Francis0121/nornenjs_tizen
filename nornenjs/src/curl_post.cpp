@@ -47,8 +47,6 @@ extern "C"{
 	}
 }
 
-const char* post_data = "{\"username\": \"nornenjs\", \"password\" : \"sg3512af@\" }";
-
 static size_t WriteCallback(void *contents, size_t size, size_t nmemb, void *userp){
     ((std::string*)userp)->append((char*)contents, size * nmemb);
     return size * nmemb;
@@ -56,7 +54,7 @@ static size_t WriteCallback(void *contents, size_t size, size_t nmemb, void *use
 
 
 extern "C" {
-	char* http_post(char* send_url){
+	char* http_post(char* send_url, const char *post_data){
 
 		CURLcode res;
 		CURL* ctx = NULL;

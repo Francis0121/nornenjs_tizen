@@ -3,7 +3,6 @@
 #include "curl_post.hpp"
 #include "json.h"
 
-#define SIGN_URL "http://112.108.40.166:10000/mobile/signIn"
 #define VOLUME_LIST_URL "http://112.108.40.166:10000/tizen/list"
 
 #define TIMEOUT 3.0
@@ -39,8 +38,9 @@ static Evas_Object * create_main_list(appdata_s *ad) {
 	char* response_buffer;
 	json_value *object_map, *volumes, *volume;
 	json_value *title_map, *volumeDataPn_map;
+	char *post_data = "{}";
 
-	response_buffer = http_post(VOLUME_LIST_URL);
+	response_buffer = http_post(VOLUME_LIST_URL, post_data);
 	dlog_print(DLOG_VERBOSE, LOG_TAG, "Response data %s", response_buffer);
 
 	object_map = json_parse(response_buffer, strlen(response_buffer));
