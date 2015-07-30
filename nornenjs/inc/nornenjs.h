@@ -18,9 +18,9 @@
 
 #define APPDATA_KEY "AppData"
 
-#define SOCKET_URI "http://112.108.40.166:5000"
-#define VOLUME_LIST_URL "http://112.108.40.166:10000/tizen/list"
-#define VOLUME_DATA_URL "http://112.108.40.166:10000/tizen/data/"
+#define SOCKET_URI "http://112.108.40.14:5000"
+#define VOLUME_LIST_URL "http://112.108.40.14:10000/tizen/list"
+#define VOLUME_DATA_URL "http://112.108.40.14:10000/tizen/data/"
 
 #define SOCKET_IMAGE_BIND_ERROR -9
 

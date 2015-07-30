@@ -162,6 +162,8 @@ static void glview_create(appdata_s *ad){
    ad->render_view = render_view = elm_glview_version_add(ad->box, EVAS_GL_GLES_1_X);
    evas_object_data_set(render_view, APPDATA_KEY, ad);
 
+   evas_object_resize(ad->render_view, 256, 256);
+
    elm_glview_mode_set(render_view, ELM_GLVIEW_ALPHA | ELM_GLVIEW_DEPTH);
    elm_glview_resize_policy_set(render_view, ELM_GLVIEW_RESIZE_POLICY_SCALE);
    elm_glview_render_policy_set(render_view, ELM_GLVIEW_RENDER_POLICY_ON_DEMAND);

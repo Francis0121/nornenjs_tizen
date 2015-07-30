@@ -58,11 +58,9 @@ void destroy_gles(Evas_Object *obj) {
 }
 
 void resize_gl(Evas_Object *obj) {
-	dlog_print(DLOG_VERBOSE, LOG_TAG, "resize_gl");
 	int w, h;
 
 	elm_glview_size_get(obj, &w, &h);
-
 	set_perspective(obj, 60.0f, w, h, 1.0f, 400.0f);
 }
 

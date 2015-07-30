@@ -127,6 +127,7 @@ extern "C" {
 
 			unsigned int decode_buf_size;
 			image_bind_error = image_util_decode_jpeg_from_memory((unsigned char *)image_char, global_binary_data_size, IMAGE_UTIL_COLORSPACE_RGBA8888, &input_image, &image_buffer_width, &image_buffer_height, &decode_buf_size);
+			dlog_print(DLOG_DEBUG, LOG_TAG, "width : %d , height : %d", image_buffer_width, image_buffer_height);
 
 			if(image_diff_count == 0){
 				image_diff_count+=1;
