@@ -4,15 +4,31 @@
 <SignatureMethod Algorithm="http://www.w3.org/2001/04/xmldsig-more#rsa-sha256"></SignatureMethod>
 <Reference URI="bin%2Fnornenjs">
 <DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
-<DigestValue>GyCGlKkZD4qcWr0CWqquY+Rqe6mSvgZUV+UQFvgmvE8=</DigestValue>
+<DigestValue>BehJp+4783FCDZLJhYrWpxAZjh4ykoULhG9oOR+wy6I=</DigestValue>
+</Reference>
+<Reference URI="lib%2Farm%2Flibboost_system.so">
+<DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
+<DigestValue>YQ2PprhIGS1zyOVuAujWimsRyH4O3Xjmw6kxLVQKvSA=</DigestValue>
+</Reference>
+<Reference URI="lib%2Farm%2Flibboost_system.so.1.55.0">
+<DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
+<DigestValue>YQ2PprhIGS1zyOVuAujWimsRyH4O3Xjmw6kxLVQKvSA=</DigestValue>
 </Reference>
 <Reference URI="lib%2Flibboost_system.so">
 <DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
-<DigestValue>YQ2PprhIGS1zyOVuAujWimsRyH4O3Xjmw6kxLVQKvSA=</DigestValue>
+<DigestValue>nKbzeNupIclQW6U7wPpbvuQ1auP2IRYfwcB3TQ/AKLQ=</DigestValue>
 </Reference>
 <Reference URI="lib%2Flibboost_system.so.1.55.0">
 <DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
-<DigestValue>YQ2PprhIGS1zyOVuAujWimsRyH4O3Xjmw6kxLVQKvSA=</DigestValue>
+<DigestValue>nKbzeNupIclQW6U7wPpbvuQ1auP2IRYfwcB3TQ/AKLQ=</DigestValue>
+</Reference>
+<Reference URI="res%2Fimages%2Fiu.png">
+<DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
+<DigestValue>iLwO5Bzet3XJ6+hLP5KGoIsFcgDFFICC19Pk+JGz4is=</DigestValue>
+</Reference>
+<Reference URI="res%2Fimages%2Flist_icon.png">
+<DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
+<DigestValue>EY3bYh/K+i4UZ3E67/Iwtk0Iq68E+31jXkEmjp4n44M=</DigestValue>
 </Reference>
 <Reference URI="res%2Fmain.png">
 <DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
@@ -24,7 +40,7 @@
 </Reference>
 <Reference URI="tizen-manifest.xml">
 <DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
-<DigestValue>HkhcOGjiXsLLnSxHn01SbXHA6+VHXBJHBJlTfr0uUic=</DigestValue>
+<DigestValue>mELIgwCTPgri8Qn44G2hedeGwj/uOmp1JJLDSoxUEdE=</DigestValue>
 </Reference>
 <Reference URI="#prop">
 <Transforms>
@@ -35,11 +51,11 @@
 </Reference>
 </SignedInfo>
 <SignatureValue>
-M8Xu5CylhF22GQ+eTkKsCu5sIi4VAZKFw9eByfG20+8gbArZDXABxKsumiR+pnaCUQQBpvs/tSXW
-joUuIq6x1tKH8OtnQiXy9NP5mDzfHxOeLF2h4HOOF8G6fNh/fPoyi9Hw8SL2PkASf54hgpxCLYxk
-ozbFApNopEsspQCDPtTOZSQ5R0tdx07Pzpv/zLD6S3EHGYciyO5LumOuB1RLJ3ejQOQuYiQul8Ob
-FEhy2HqFHwcE2Gddk96ZxoOeM+ucr0Hn7T4TsjNPwtYfHLUK/3VOiciDuZqVm/r802vc0SZQVgDW
-2B7yKg5fkwZOSpcM3ulxNkE99+flPkWIpmpmDQ==
+mf+vVoOdkkQAxhecAep5/Y5VFGorrf8mQqww4o/c5igWjWJ9Dd3imcuDc5Fl0N0VjAcaef3F72YU
+0pid9yRa/13Yo78zQfd5aY9NS6M2IUC/bb1ytaZfhwnc9fEgmmeVDJ45OYbVKmu78710jcFSE0Ej
+htRDaz4TPi+ucod8yP/0pUgLsk3Y+2HA4/bXAwghUCBu2uEyFllrfV+1U1DL698o8JEe406eVOsF
+Etblz8IsZMEiaaKnGBeoHX6f9rrcElRODINbfyP6iqq2fvdNtp+QFEpaCLejWq5Y0fDOle5l0Y+G
+sssA3j/GjgzmxHR+pC5WucOfdP27RIoD6/t3LQ==
 </SignatureValue>
 <KeyInfo>
 <X509Data>

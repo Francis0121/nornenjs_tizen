@@ -198,7 +198,7 @@ static void create_volume_render_view(appdata_s *ad){
 	evas_object_size_hint_align_set(bright_slider, EVAS_HINT_FILL, EVAS_HINT_FILL);
 	evas_object_size_hint_weight_set(bright_slider, 1, 0.00001);
 	elm_slider_indicator_format_set(bright_slider, "%1.0f");
-	elm_slider_min_max_set(bright_slider, 0, 600);
+	elm_slider_min_max_set(bright_slider, 0, 1000);
 	elm_slider_value_set(bright_slider, 200);
 	evas_object_smart_callback_add(bright_slider, "changed", brightness_changed_cb, ad);
 	evas_object_event_callback_add(bright_slider, EVAS_CALLBACK_MOUSE_UP, brightness_mouseup_cb, ad);

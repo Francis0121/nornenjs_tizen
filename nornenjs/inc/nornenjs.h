@@ -22,6 +22,8 @@
 #define VOLUME_LIST_URL "http://112.108.40.14:10000/tizen/list"
 #define VOLUME_DATA_URL "http://112.108.40.14:10000/tizen/data/"
 
+#define ICON_DIR "/opt/usr/apps/org.tizen.nornenjs/res/images"
+
 #define SOCKET_IMAGE_BIND_ERROR -9
 
 typedef struct appdata {

@@ -8,6 +8,24 @@
 
 static double initial_time = 0;
 
+static Evas_Object* create_image(Evas_Object *parent)
+{
+	Evas_Object *img = elm_image_add(parent);
+	elm_image_file_set(img, ICON_DIR"/list_icon.png", NULL);
+	evas_object_size_hint_align_set(img, EVAS_HINT_FILL, EVAS_HINT_FILL);
+	evas_object_size_hint_weight_set(img, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+	return img;
+}
+
+static Evas_Object* gl_content_get_cb(void *data, Evas_Object *obj, const char *part){
+	Evas_Object *content = create_image(obj);
+
+	evas_object_size_hint_min_set(content, 50, 50);
+	evas_object_size_hint_max_set(content, 50, 50);
+
+	return content;
+}
+
 static char* gl_text_get_cb(void *data, Evas_Object *obj, const char *part)
 {
 	int index = (int) data;
@@ -67,9 +85,9 @@ static Evas_Object * create_main_list(appdata_s *ad) {
 	evas_object_size_hint_weight_set(genlist, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
 	evas_object_size_hint_align_set(genlist, EVAS_HINT_FILL, EVAS_HINT_FILL);
 
-	itc.item_style = "default";
+	itc.item_style = "one_icon";
 	itc.func.text_get = gl_text_get_cb;
-	itc.func.content_get = NULL;
+	itc.func.content_get = gl_content_get_cb;
 	itc.func.state_get = NULL;
 	itc.func.del = NULL;
 
