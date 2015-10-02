@@ -4,23 +4,15 @@
 <SignatureMethod Algorithm="http://www.w3.org/2001/04/xmldsig-more#rsa-sha256"></SignatureMethod>
 <Reference URI="bin%2Fnornenjs">
 <DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
-<DigestValue>BehJp+4783FCDZLJhYrWpxAZjh4ykoULhG9oOR+wy6I=</DigestValue>
-</Reference>
-<Reference URI="lib%2Farm%2Flibboost_system.so">
-<DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
-<DigestValue>YQ2PprhIGS1zyOVuAujWimsRyH4O3Xjmw6kxLVQKvSA=</DigestValue>
-</Reference>
-<Reference URI="lib%2Farm%2Flibboost_system.so.1.55.0">
-<DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
-<DigestValue>YQ2PprhIGS1zyOVuAujWimsRyH4O3Xjmw6kxLVQKvSA=</DigestValue>
+<DigestValue>Fgpsb4BUtHrfLfMj9a+1aY5i4V3yUK2rKNRhW5E86vg=</DigestValue>
 </Reference>
 <Reference URI="lib%2Flibboost_system.so">
 <DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
-<DigestValue>nKbzeNupIclQW6U7wPpbvuQ1auP2IRYfwcB3TQ/AKLQ=</DigestValue>
+<DigestValue>YQ2PprhIGS1zyOVuAujWimsRyH4O3Xjmw6kxLVQKvSA=</DigestValue>
 </Reference>
 <Reference URI="lib%2Flibboost_system.so.1.55.0">
 <DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
-<DigestValue>nKbzeNupIclQW6U7wPpbvuQ1auP2IRYfwcB3TQ/AKLQ=</DigestValue>
+<DigestValue>YQ2PprhIGS1zyOVuAujWimsRyH4O3Xjmw6kxLVQKvSA=</DigestValue>
 </Reference>
 <Reference URI="res%2Fimages%2Fiu.png">
 <DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
@@ -38,9 +30,13 @@
 <DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
 <DigestValue>xj2pngin8R80yiBRunYKTbiPRB6fdEtaPt0E5/nhSy8=</DigestValue>
 </Reference>
+<Reference URI="shared%2Fres%2Ffavicon_cirlcle.png">
+<DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
+<DigestValue>jkTxwI8RMgdiw/ltkHveTQaGkQmpo+CzK93KygM+jwg=</DigestValue>
+</Reference>
 <Reference URI="tizen-manifest.xml">
 <DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
-<DigestValue>mELIgwCTPgri8Qn44G2hedeGwj/uOmp1JJLDSoxUEdE=</DigestValue>
+<DigestValue>Wy1phCLmol2wlswImHEqjZ/A3r/WNXCZx67bZXBH1Y4=</DigestValue>
 </Reference>
 <Reference URI="#prop">
 <Transforms>
@@ -51,11 +47,11 @@
 </Reference>
 </SignedInfo>
 <SignatureValue>
-mf+vVoOdkkQAxhecAep5/Y5VFGorrf8mQqww4o/c5igWjWJ9Dd3imcuDc5Fl0N0VjAcaef3F72YU
-0pid9yRa/13Yo78zQfd5aY9NS6M2IUC/bb1ytaZfhwnc9fEgmmeVDJ45OYbVKmu78710jcFSE0Ej
-htRDaz4TPi+ucod8yP/0pUgLsk3Y+2HA4/bXAwghUCBu2uEyFllrfV+1U1DL698o8JEe406eVOsF
-Etblz8IsZMEiaaKnGBeoHX6f9rrcElRODINbfyP6iqq2fvdNtp+QFEpaCLejWq5Y0fDOle5l0Y+G
-sssA3j/GjgzmxHR+pC5WucOfdP27RIoD6/t3LQ==
+ljp85w1YZabq1RFFYVodVeUTvaXhqHvIOG3ugIbiR597vx0OjuMMQ7a6Sxf2gl2hwHJoeI8T2NAI
+LMNDKv1pceQGoFGq4JxmUgaQiwk6Y7dptyOV8br8zzlmQepZWBsnbDbTaYc9vxxOSb4GbZHGqioh
+MRS8/koGPtW3jb96nje86RSkQXBU4SnJBB+fvCxhY6uKH2+jjfbmV+ZAmZGsMNd2pKEC3UIiqgvX
+S3Gi6toL+1tYNMEoiatHe3HZoXAESeegWhcTGDrhrU/ccGqoZuTLLU0PVQPQe0YEalugA4eBQoi4
+55uNY5TUfJJR+1e3bSphq4HcV+3DhoLtu3LM8w==
 </SignatureValue>
 <KeyInfo>
 <X509Data>

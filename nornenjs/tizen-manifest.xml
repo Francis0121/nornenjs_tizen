@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<manifest xmlns="http://tizen.org/ns/packages" api-version="2.3" package="org.tizen.nornenjs" version="1.0.0">
+<manifest xmlns="http://tizen.org/ns/packages" api-version="2.3" package="org.tizen.nornenjs" version="1.0.1">
     <author email="tjdrms0121@gmail.com">SungGeunKim</author>
     <profile name="mobile"/>
     <ui-application appid="org.tizen.nornenjs" exec="nornenjs" multiple="false" nodisplay="false" taskmanage="true" type="capp">
         <label>Nornenjs</label>
-        <icon>favicon.png</icon>
+        <icon>favicon_cirlcle.png</icon>
     </ui-application>
     <privileges>
         <privilege>http://tizen.org/privilege/systemsettings</privilege>

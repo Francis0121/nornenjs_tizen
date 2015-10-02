@@ -154,7 +154,7 @@ static void create_base_gui(appdata_s *ad) {
 	/* Window */
 	ad->win = elm_win_util_standard_add(PACKAGE, PACKAGE);
 	elm_win_autodel_set(ad->win, EINA_TRUE);
-	elm_win_indicator_mode_set(ad->win, ELM_WIN_INDICATOR_HIDE);
+	elm_win_indicator_mode_set(ad->win, ELM_WIN_INDICATOR_SHOW);
 	evas_object_smart_callback_add(ad->win, "delete,request",win_delete_request_cb, NULL);
 
 	/* Conformant */
